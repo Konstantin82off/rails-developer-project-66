@@ -33,5 +33,4 @@ rubocop
 ```
 
 ## Деплой
-
-<!-- Ссылка будет добавлена после деплоя на Render -->
+[Открыть приложение на Render](https://rails-developer-project-66.onrender.com)
