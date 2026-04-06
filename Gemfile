@@ -42,6 +42,14 @@ gem "thruster", require: false
 # Error tracking
 gem "rollbar"
 
+# Authentication
+gem "omniauth"
+gem "omniauth-github"
+gem "omniauth-rails_csrf_protection"
+
+# GitHub API
+gem "octokit"
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 

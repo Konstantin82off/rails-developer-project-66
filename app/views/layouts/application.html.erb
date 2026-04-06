@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Rails Developer Project 66" %></title>
+    <title><%= content_for(:title) || "GitHub Quality Analyzer" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -9,9 +9,6 @@
     <%= csp_meta_tag %>
 
     <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -23,6 +20,33 @@
   </head>
 
   <body>
-    <%= yield %>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <%= link_to "GitHub Quality Analyzer", root_path, class: "navbar-brand" %>
+        
+        <div class="navbar-nav ms-auto">
+          <% if session[:user_id] %>
+            <% user = User.find_by(id: session[:user_id]) %>
+            <span class="nav-item nav-link">Welcome, <%= user&.nickname || "User" %></span>
+            <%= link_to "Logout", logout_path, class: "nav-item nav-link", data: { turbo_method: :delete } %>
+          <% else %>
+            <a href="/auth/github" class="nav-item nav-link btn btn-primary">
+              <i class="bi bi-github me-1"></i> Login with GitHub
+            </a>
+          <% end %>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <% if flash[:notice] %>
+        <div class="alert alert-success"><%= flash[:notice] %></div>
+      <% end %>
+      <% if flash[:alert] %>
+        <div class="alert alert-danger"><%= flash[:alert] %></div>
+      <% end %>
+      
+      <%= yield %>
+    </div>
   </body>
 </html>
