@@ -1,0 +1,37 @@
+<div class="container mt-4">
+  <h1>New</h1>
+  
+  <%= link_to "Back to repositories", repositories_path, class: "btn btn-secondary mb-3" %>
+  
+  <% if @github_repos.any? %>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Language</th>
+          <th>Last check passed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @github_repos.each do |repo| %>
+          <tr>
+            <td>
+              <% if repo.language&.downcase == "ruby" %>
+                <%= form_tag repositories_path, method: :post, style: "display: inline;" do %>
+                  <%= hidden_field_tag "repository[github_id]", repo.id %>
+                  <%= submit_tag repo.full_name, class: "btn btn-link p-0" %>
+                <% end %>
+              <% else %>
+                <%= repo.full_name %>
+              <% end %>
+            </td>
+            <td><%= repo.language || "Unknown" %></td>
+            <td>false</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No Ruby repositories found in your GitHub account.</p>
+  <% end %>
+</div>

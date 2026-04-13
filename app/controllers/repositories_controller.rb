@@ -5,6 +5,10 @@ class RepositoriesController < ApplicationController
     @repositories = current_user.repositories
   end
 
+  def show
+    @repository = current_user.repositories.find(params[:id])
+  end
+
   def new
     @github_repos = fetch_user_repositories
     @repositories = current_user.repositories

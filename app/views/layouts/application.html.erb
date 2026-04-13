@@ -25,9 +25,9 @@
         <%= link_to "GitHub Quality Analyzer", root_path, class: "navbar-brand" %>
         
         <div class="navbar-nav ms-auto">
-          <% if session[:user_id] %>
-            <% user = User.find_by(id: session[:user_id]) %>
-            <span class="nav-item nav-link">Welcome, <%= user&.nickname || "User" %></span>
+          <% if current_user %>
+            <%= link_to "Repositories", repositories_path, class: "nav-item nav-link" %>
+            <span class="nav-item nav-link">Welcome, <%= current_user.nickname %></span>
             <%= link_to "Logout", logout_path, class: "nav-item nav-link", data: { turbo_method: :delete } %>
           <% else %>
             <a href="/auth/github" class="nav-item nav-link btn btn-primary">

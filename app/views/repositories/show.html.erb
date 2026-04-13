@@ -1,0 +1,50 @@
+<div class="container mt-4">
+  <h1><%= @repository.full_name %></h1>
+  
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Repository Info</h5>
+      <dl class="row">
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9"><%= @repository.full_name %></dd>
+        
+        <dt class="col-sm-3">Language</dt>
+        <dd class="col-sm-9"><%= @repository.language %></dd>
+        
+        <dt class="col-sm-3">Created at</dt>
+        <dd class="col-sm-9"><%= @repository.created_at.strftime("%B %d, %Y %H:%M") if @repository.created_at %></dd>
+        
+        <dt class="col-sm-3">Updated at</dt>
+        <dd class="col-sm-9"><%= @repository.updated_at.strftime("%B %d, %Y %H:%M") if @repository.updated_at %></dd>
+      </dl>
+    </div>
+  </div>
+
+  <h3>Checks</h3>
+  <% if @repository.checks.any? %>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>State</th>
+          <th>Reference</th>
+          <th>Check passed</th>
+          <th>Created At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @repository.checks.order(created_at: :desc).each do |check| %>
+          <tr>
+            <td><%= check.state || "finished" %></td>
+            <td><%= check.reference %></td>
+            <td><%= check.passed %></td>
+            <td><%= check.created_at.strftime("%d %b %H:%M") if check.created_at %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No checks yet</p>
+  <% end %>
+  
+  <%= link_to "Back to repositories", repositories_path, class: "btn btn-secondary mt-3" %>
+</div>

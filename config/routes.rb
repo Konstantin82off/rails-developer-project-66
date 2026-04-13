@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   delete "/logout", to: "sessions#destroy"
 
   # Repositories routes
-  resources :repositories, only: [ :index, :new, :create ]
+  resources :repositories, only: [ :index, :new, :create, :show ]
 
   get "rollbar/test" => "rollbar#test" if Rails.env.development?
 
