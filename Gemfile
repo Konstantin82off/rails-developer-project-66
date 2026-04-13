@@ -49,6 +49,7 @@ gem "omniauth-rails_csrf_protection"
 
 # GitHub API
 gem "octokit"
+gem "faraday-retry"
 
 # Enumerations
 gem "enumerize"
@@ -82,4 +83,5 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem "mocha"
 end

@@ -7,5 +7,13 @@ Rails.application.routes.draw do
   get "/auth/github/callback", to: "sessions#create", as: :callback_auth
   delete "/logout", to: "sessions#destroy"
 
+  # Repositories routes
+  resources :repositories, only: [ :index, :new, :create ]
+
   get "rollbar/test" => "rollbar#test" if Rails.env.development?
+
+  # Test route for authentication in tests
+  if Rails.env.test?
+    post "/login_as_user", to: "sessions#login_as_user"
+  end
 end

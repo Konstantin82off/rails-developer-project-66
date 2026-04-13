@@ -24,6 +24,13 @@ class SessionsController < ApplicationController
     redirect_to root_path, notice: "Logged out successfully"
   end
 
+  # Only for testing
+  def login_as_user
+    user = User.find(params[:user_id])
+    session[:user_id] = user.id
+    head :ok
+  end
+
   private
 
   def find_or_create_user(auth_hash)
