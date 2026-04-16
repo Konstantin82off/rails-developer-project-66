@@ -20,7 +20,7 @@
             <td><%= repo.language %></td>
             <td>
               <% if repo.checks.any? %>
-                <%= repo.checks.last.passed? %>
+                <%= repo.checks.last.passed ? "true" : "false" %>
               <% else %>
                 No checks yet
               <% end %>

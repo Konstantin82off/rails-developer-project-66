@@ -7,8 +7,10 @@ Rails.application.routes.draw do
   get "/auth/github/callback", to: "sessions#create", as: :callback_auth
   delete "/logout", to: "sessions#destroy"
 
-  # Repositories routes
-  resources :repositories, only: [ :index, :new, :create, :show ]
+  # Repositories routes with nested checks
+  resources :repositories, only: [ :index, :new, :create, :show ] do
+    resources :checks, only: [ :create, :show ], module: :repositories
+  end
 
   get "rollbar/test" => "rollbar#test" if Rails.env.development?
 
