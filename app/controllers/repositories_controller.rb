@@ -44,7 +44,8 @@ class RepositoriesController < ApplicationController
   end
 
   def fetch_user_repositories
-    client = Octokit::Client.new(access_token: current_user.token, auto_paginate: true)
+    client_class = ApplicationContainer[:github_client]
+    client = client_class.new(access_token: current_user.token, auto_paginate: true)
     client.repos
   rescue Octokit::Error => e
     Rails.logger.error "GitHub API error: #{e.message}"

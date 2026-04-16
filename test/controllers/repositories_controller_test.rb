@@ -10,14 +10,20 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
       token: "fake_token"
     )
 
-    # Создаём мок репозитория
-    @mock_repo = Struct.new(:id, :name, :full_name, :language, :clone_url, :ssh_url).new(
-      123,
-      "test-repo",
-      "testuser/test-repo",
-      "Ruby",
-      "https://github.com/testuser/test-repo.git",
-      "git@github.com:testuser/test-repo.git"
+    # Stub GitHub API calls
+    stub_request(:get, /api.github.com\/user\/repos/).to_return(
+      status: 200,
+      body: [
+        {
+          id: 123,
+          name: "test-repo",
+          full_name: "testuser/test-repo",
+          language: "Ruby",
+          clone_url: "https://github.com/testuser/test-repo.git",
+          ssh_url: "git@github.com:testuser/test-repo.git"
+        }
+      ].to_json,
+      headers: { "Content-Type" => "application/json" }
     )
   end
 
@@ -30,7 +36,6 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
 
   test "should get new" do
     post login_as_user_path, params: { user_id: @user.id }
-    Octokit::Client.any_instance.stubs(:repos).returns([ @mock_repo ])
 
     get new_repository_path
     assert_response :success
@@ -38,7 +43,6 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create repository" do
     post login_as_user_path, params: { user_id: @user.id }
-    Octokit::Client.any_instance.stubs(:repos).returns([ @mock_repo ])
 
     assert_difference("Repository.count", 1) do
       post repositories_path, params: { repository: { github_id: "123" } }
@@ -51,16 +55,21 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
   test "should not create non-ruby repository" do
     post login_as_user_path, params: { user_id: @user.id }
 
-    non_ruby_repo = Struct.new(:id, :name, :full_name, :language, :clone_url, :ssh_url).new(
-      456,
-      "js-repo",
-      "testuser/js-repo",
-      "JavaScript",
-      "https://github.com/testuser/js-repo.git",
-      "git@github.com:testuser/js-repo.git"
+    # Stub for non-ruby repository
+    stub_request(:get, /api.github.com\/user\/repos/).to_return(
+      status: 200,
+      body: [
+        {
+          id: 456,
+          name: "js-repo",
+          full_name: "testuser/js-repo",
+          language: "JavaScript",
+          clone_url: "https://github.com/testuser/js-repo.git",
+          ssh_url: "git@github.com:testuser/js-repo.git"
+        }
+      ].to_json,
+      headers: { "Content-Type" => "application/json" }
     )
-
-    Octokit::Client.any_instance.stubs(:repos).returns([ non_ruby_repo ])
 
     assert_no_difference("Repository.count") do
       post repositories_path, params: { repository: { github_id: "456" } }
