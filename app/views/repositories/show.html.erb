@@ -1,7 +1,7 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1><%= @repository.full_name %></h1>
-    <%= link_to "Run Check", repository_checks_path(@repository), method: :post, class: "btn btn-primary" %>
+    <%= button_to "Run Check", repository_checks_path(@repository), method: :post, class: "btn btn-primary", data: { turbo: false } %>
   </div>
 
   <div class="card mb-4">
@@ -50,7 +50,7 @@
       </tbody>
     </table>
   <% else %>
-    <p>No checks yet. <%= link_to "Run first check", repository_checks_path(@repository), method: :post %>.</p>
+    <p>No checks yet. <%= button_to "Run first check", repository_checks_path(@repository), method: :post, data: { turbo: false } %></p>
   <% end %>
   
   <%= link_to "Back to repositories", repositories_path, class: "btn btn-secondary mt-3" %>

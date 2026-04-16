@@ -35,14 +35,6 @@ class RepositoriesController < ApplicationController
 
   private
 
-  def authenticate_user!
-    redirect_to root_path, alert: "Please login first" unless session[:user_id]
-  end
-
-  def current_user
-    @current_user ||= User.find_by(id: session[:user_id])
-  end
-
   def fetch_user_repositories
     client_class = ApplicationContainer[:github_client]
     client = client_class.new(access_token: current_user.token, auto_paginate: true)
