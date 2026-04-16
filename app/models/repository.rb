@@ -2,6 +2,7 @@ class Repository < ApplicationRecord
   extend Enumerize
 
   belongs_to :user
+  has_many :checks, class_name: "Repository::Check", dependent: :destroy
 
   validates :name, presence: true
   validates :github_id, presence: true, uniqueness: true
@@ -13,8 +14,8 @@ class Repository < ApplicationRecord
 
   scope :by_user, ->(user) { where(user: user) }
 
-  # Временная заглушка для checks (будет заменена на реальную ассоциацию в следующем шаге)
+  # Временная заглушка для checks (будет заменена на реальную ассоциацию)
   def checks
-    []
+    super
   end
 end
