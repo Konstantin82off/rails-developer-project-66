@@ -10,7 +10,7 @@ class Repository < ApplicationRecord
   validates :clone_url, presence: true
   validates :ssh_url, presence: true
 
-  enumerize :language, in: [ :ruby ], predicates: true, default: :ruby
+  enumerize :language, in: [ :ruby, :javascript ], predicates: true, default: :ruby
 
   scope :by_user, ->(user) { where(user: user) }
 

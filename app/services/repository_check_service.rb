@@ -17,7 +17,7 @@ class RepositoryCheckService
     clone_repository
     update_state(:checking)
 
-    run_rubocop
+    run_linter
     update_state(:finished)
   rescue StandardError => e
     handle_error(e)
@@ -57,9 +57,9 @@ class RepositoryCheckService
     @check.update!(commit_id: sha_stdout.strip)
   end
 
-  def run_rubocop
-    linter = ApplicationContainer[:linter]
-    result = linter.run(@repo_path.to_s)
+  def run_linter
+    linter_class = LinterFactory.for(@repository.language)
+    result = linter_class.run(@repo_path.to_s)
 
     @check.update!(
       passed: result[:passed],

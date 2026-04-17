@@ -5,9 +5,11 @@ class ApplicationContainer
 
   if Rails.env.test?
     register :github_client, -> { GithubClientStub }
-    register :linter, -> { LinterStub }
+    register :linter_ruby, -> { LinterStub }
+    register :linter_javascript, -> { LinterStub }
   else
     register :github_client, -> { Octokit::Client }
-    register :linter, -> { RubocopLinter }
+    register :linter_ruby, -> { RubocopLinter }
+    register :linter_javascript, -> { JavascriptLinter }
   end
 end
