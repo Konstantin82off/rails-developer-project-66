@@ -31,6 +31,6 @@ class CheckMailerTest < ActionMailer::TestCase
 
     assert_equal "Check failed for testuser/test-repo", mail.subject
     assert_equal [ @user.email ], mail.to
-    assert_match /Some errors found/, mail.body.encoded
+    assert_match(/Some errors found/, mail.body.encoded)
   end
 end
