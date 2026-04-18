@@ -65,6 +65,9 @@ class RepositoryCheckService
       passed: result[:passed],
       output: result[:output]
     )
+
+    # Отправляем email, если проверка не прошла
+    CheckMailer.failure_report(@check.id).deliver_later unless @check.passed
   end
 
   def handle_error(error)
@@ -74,6 +77,9 @@ class RepositoryCheckService
       aasm_state: :failed
     )
     Rails.logger.error "Check #{@check.id} failed: #{error.message}"
+
+    # Отправляем email при ошибке выполнения проверки
+    CheckMailer.failure_report(@check.id).deliver_later
   end
 
   def cleanup
