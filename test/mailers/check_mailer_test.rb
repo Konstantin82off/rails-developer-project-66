@@ -2,21 +2,10 @@ require "test_helper"
 
 class CheckMailerTest < ActionMailer::TestCase
   setup do
-    @user = User.create!(
-      uid: "12345",
-      nickname: "testuser",
-      email: "test@example.com",
-      token: "fake_token"
-    )
-
-    @repository = @user.repositories.create!(
-      name: "test-repo",
-      github_id: 123,
-      full_name: "testuser/test-repo",
-      language: "ruby",
-      clone_url: "https://github.com/testuser/test-repo.git",
-      ssh_url: "git@github.com:testuser/test-repo.git"
-    )
+    @user = users(:one)
+    @repository = repositories(:without_checks)
+    # Обновляем репозиторий, чтобы он принадлежал пользователю one
+    @repository.update!(user: @user)
 
     @check = @repository.checks.create!(
       commit_id: "abc123",
@@ -29,7 +18,7 @@ class CheckMailerTest < ActionMailer::TestCase
   test "failure_report" do
     mail = CheckMailer.failure_report(@check.id)
 
-    assert_equal "Check failed for testuser/test-repo", mail.subject
+    assert_equal "Check failed for #{@repository.full_name}", mail.subject
     assert_equal [ @user.email ], mail.to
     assert_match(/Some errors found/, mail.body.encoded)
   end

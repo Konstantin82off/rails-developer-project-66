@@ -26,8 +26,5 @@ module RailsDeveloperProject66
 
     # Add services to autoload paths
     config.autoload_paths << Rails.root.join("app/services")
-
-    # Default URL options for webhooks
-    config.routes.default_url_options = { host: ENV.fetch("BASE_URL", "localhost:3000") }
   end
 end

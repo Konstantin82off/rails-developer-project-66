@@ -2,15 +2,9 @@ require "test_helper"
 
 class RepositoriesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    # Создаём тестового пользователя
-    @user = User.create!(
-      uid: "12345",
-      nickname: "testuser",
-      email: "test@example.com",
-      token: "fake_token"
-    )
+    @user = users(:one)
 
-    # Stub GitHub API calls
+    # Stub для получения списка репозиториев
     stub_request(:get, /api.github.com\/user\/repos/).to_return(
       status: 200,
       body: [
@@ -25,18 +19,30 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
       ].to_json,
       headers: { "Content-Type" => "application/json" }
     )
+
+    # Stub для получения деталей репозитория при создании
+    stub_request(:get, /api.github.com\/repos\/.*/).to_return(
+      status: 200,
+      body: {
+        id: 123,
+        name: "test-repo",
+        full_name: "testuser/test-repo",
+        language: "Ruby",
+        clone_url: "https://github.com/testuser/test-repo.git",
+        ssh_url: "git@github.com:testuser/test-repo.git"
+      }.to_json,
+      headers: { "Content-Type" => "application/json" }
+    )
   end
 
   test "should get index" do
     post login_as_user_path, params: { user_id: @user.id }
-
     get repositories_path
     assert_response :success
   end
 
   test "should get new" do
     post login_as_user_path, params: { user_id: @user.id }
-
     get new_repository_path
     assert_response :success
   end
@@ -55,7 +61,7 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
   test "should not create non-ruby repository" do
     post login_as_user_path, params: { user_id: @user.id }
 
-    # Stub for non-ruby repository
+    # Переопределяем stub для не-ruby репозитория
     stub_request(:get, /api.github.com\/user\/repos/).to_return(
       status: 200,
       body: [

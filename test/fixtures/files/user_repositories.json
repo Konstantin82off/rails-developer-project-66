@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "language": "ruby",
+    "full_name": "Hexlet/hexlet"
+  },
+  {
+    "id": 2,
+    "language": "javascript",
+    "full_name": "Hexlet/hexlet-basics"
+  }
+]
