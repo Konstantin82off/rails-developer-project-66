@@ -27,6 +27,8 @@ class RepositoriesController < ApplicationController
         clone_url: github_repo.clone_url,
         ssh_url: github_repo.ssh_url
       )
+      # Устанавливаем вебхук для репозитория
+      GithubWebhookService.install(repository)
       redirect_to repositories_path, notice: "Repository #{repository.name} was successfully added."
     else
       redirect_to new_repository_path, alert: "Repository is not a Ruby project or does not exist."
