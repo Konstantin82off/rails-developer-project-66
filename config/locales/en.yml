@@ -1,31 +1,66 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
-  hello: "Hello world"
+  app_name: "GitHub Quality Analyzer"
+  welcome: "Welcome,"
+  
+  auth:
+    login: "Login with GitHub"
+    logout: "Logout"
+    success: "Successfully logged in!"
+    failure: "Authentication failed"
+    logout_success: "Logged out successfully"
+  
+  repositories:
+    index:
+      title: "Repositories"
+      new: "Add New Repository"
+      no_repositories: "No repositories added yet."
+      name: "Name"
+      language: "Language"
+      last_check: "Last check passed"
+      true: "true"
+      false: "false"
+      no_checks: "No checks yet"
+    new:
+      title: "Add Repository"
+      back: "Back to repositories"
+      select_repository: "Select a repository to add:"
+      choose_repository: "Choose repository:"
+      add_button: "Add Repository"
+      no_ruby_repos: "No Ruby repositories found in your GitHub account."
+    show:
+      title: "Repository Info"
+      run_check: "Run Check"
+      checks: "Checks"
+      no_checks: "No checks yet"
+      run_first_check: "Run first check"
+      back: "Back to repositories"
+      id: "ID"
+      commit_id: "Commit ID"
+      state: "State"
+      passed: "Passed"
+      created_at: "Created At"
+      actions: "Actions"
+      view: "View"
+      created_at_label: "Created at"
+      updated_at_label: "Updated at"
+  
+  checks:
+    show:
+      title: "Check #%{id}"
+      back: "Back to repository"
+      commit_id: "Commit ID"
+      state: "State"
+      passed: "Passed"
+      pending: "Pending"
+      created_at: "Created at"
+      updated_at: "Updated at"
+      output: "Output"
+      success: "Success! No offenses detected."
+      warning: "Warning! Rubocop found offenses in this repository."
+      error: "Error! The check failed to complete. Please try again."
+  
+  flash:
+    check_created: "Check was created and is being processed"
+    repository_added: "Repository %{name} was successfully added."
+    repository_not_ruby: "Repository is not a Ruby project or does not exist."
+    please_login: "Please login first"

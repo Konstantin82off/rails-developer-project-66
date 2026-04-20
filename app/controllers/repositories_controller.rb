@@ -1,20 +1,24 @@
-class RepositoriesController < ApplicationController
-  before_action :authenticate_user!
+# frozen_string_literal: true
 
+class RepositoriesController < ApplicationController
   def index
+    return redirect_to root_path, alert: t("flash.please_login") unless current_user
     @repositories = current_user.repositories
   end
 
   def show
+    return redirect_to root_path, alert: t("flash.please_login") unless current_user
     @repository = current_user.repositories.find(params[:id])
   end
 
   def new
+    return redirect_to root_path, alert: t("flash.please_login") unless current_user
     @github_repos = fetch_user_repositories
     @repositories = current_user.repositories
   end
 
   def create
+    return redirect_to root_path, alert: t("flash.please_login") unless current_user
     repo_params = params.require(:repository).permit(:github_id)
     github_repo = fetch_user_repositories.find { |r| r.id.to_s == repo_params[:github_id] }
 
@@ -27,9 +31,9 @@ class RepositoriesController < ApplicationController
         clone_url: github_repo.clone_url,
         ssh_url: github_repo.ssh_url
       )
-      redirect_to repositories_path, notice: "Repository #{repository.name} was successfully added."
+      redirect_to repositories_path, notice: t("flash.repository_added", name: repository.name)
     else
-      redirect_to new_repository_path, alert: "Repository is not a Ruby project or does not exist."
+      redirect_to new_repository_path, alert: t("flash.repository_not_ruby")
     end
   end
 

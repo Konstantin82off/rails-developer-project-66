@@ -1,27 +1,28 @@
-class SessionsController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: :create
+# frozen_string_literal: true
 
+class SessionsController < ApplicationController
   def new
     redirect_to "/auth/github"
   end
 
   def create
+    verify_authenticity_token unless Rails.env.test?
     auth_hash = request.env["omniauth.auth"]
 
     if auth_hash.nil?
-      redirect_to root_path, alert: "Authentication failed"
+      redirect_to root_path, alert: t("auth.failure")
       return
     end
 
     user = find_or_create_user(auth_hash)
     session[:user_id] = user.id
 
-    redirect_to root_path, notice: "Successfully logged in!"
+    redirect_to root_path, notice: t("auth.success")
   end
 
   def destroy
     session[:user_id] = nil
-    redirect_to root_path, notice: "Logged out successfully"
+    redirect_to root_path, notice: t("auth.logout_success")
   end
 
   # Only for testing
@@ -35,11 +36,9 @@ class SessionsController < ApplicationController
 
   def find_or_create_user(auth_hash)
     user = User.find_or_initialize_by(uid: auth_hash["uid"])
-
     user.nickname = auth_hash["info"]["nickname"]
     user.email = auth_hash["info"]["email"]
     user.token = auth_hash["credentials"]["token"]
-
     user.save!
     user
   end
