@@ -1,57 +1,57 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1><%= @repository.full_name %></h1>
-    <%= button_to "Run Check", repository_checks_path(@repository), method: :post, class: "btn btn-primary", data: { turbo: false } %>
+    <%= button_to t("repositories.show.run_check"), repository_checks_path(@repository), method: :post, class: "btn btn-primary", data: { turbo: false } %>
   </div>
 
   <div class="card mb-4">
     <div class="card-body">
-      <h5 class="card-title">Repository Info</h5>
+      <h5 class="card-title"><%= t("repositories.show.title") %></h5>
       <dl class="row">
-        <dt class="col-sm-3">Name</dt>
+        <dt class="col-sm-3"><%= t("repositories.index.name") %></dt>
         <dd class="col-sm-9"><%= @repository.full_name %></dd>
         
-        <dt class="col-sm-3">Language</dt>
+        <dt class="col-sm-3"><%= t("repositories.index.language") %></dt>
         <dd class="col-sm-9"><%= @repository.language %></dd>
         
-        <dt class="col-sm-3">Created at</dt>
+        <dt class="col-sm-3"><%= t("repositories.show.created_at") %></dt>
         <dd class="col-sm-9"><%= @repository.created_at.strftime("%B %d, %Y %H:%M") if @repository.created_at %></dd>
         
-        <dt class="col-sm-3">Updated at</dt>
+        <dt class="col-sm-3"><%= t("repositories.show.updated_at") %></dt>
         <dd class="col-sm-9"><%= @repository.updated_at.strftime("%B %d, %Y %H:%M") if @repository.updated_at %></dd>
       </dl>
     </div>
   </div>
 
-  <h3>Checks</h3>
+  <h3><%= t("repositories.show.checks") %></h3>
   <% if @repository.checks.any? %>
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Commit ID</th>
-          <th>State</th>
-          <th>Passed</th>
-          <th>Created At</th>
-          <th>Actions</th>
+          <th><%= t("repositories.show.id") %></th>
+          <th><%= t("repositories.show.commit_id") %></th>
+          <th><%= t("repositories.show.state") %></th>
+          <th><%= t("repositories.show.passed") %></th>
+          <th><%= t("repositories.show.created_at") %></th>
+          <th><%= t("repositories.show.actions") %></th>
         </tr>
       </thead>
       <tbody>
         <% @repository.checks.order(created_at: :desc).each do |check| %>
           <tr>
             <td><%= check.id %></td>
-            <td><%= check.commit_id&.first(8) %>...</td>
+            <td><%= check.commit_id&.first(8) %>...</dd>
             <td><span class="badge bg-<%= check_state_badge(check.aasm_state) %>"><%= check.aasm_state %></span></td>
-            <td><%= check.passed.nil? ? "Pending" : check.passed %></td>
+            <td><%= check.passed.nil? ? t("checks.show.pending") : check.passed %></td>
             <td><%= check.created_at.strftime("%d %b %H:%M") %></td>
-            <td><%= link_to "View", repository_check_path(@repository, check) %></td>
+            <td><%= link_to t("repositories.show.view"), repository_check_path(@repository, check) %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
   <% else %>
-    <p>No checks yet. <%= button_to "Run first check", repository_checks_path(@repository), method: :post, data: { turbo: false } %></p>
+    <p><%= t("repositories.show.no_checks") %> <%= button_to t("repositories.show.run_first_check"), repository_checks_path(@repository), method: :post, data: { turbo: false } %></p>
   <% end %>
   
-  <%= link_to "Back to repositories", repositories_path, class: "btn btn-secondary mt-3" %>
+  <%= link_to t("repositories.show.back"), repositories_path, class: "btn btn-secondary mt-3" %>
 </div>
