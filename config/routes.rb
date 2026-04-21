@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     root "home#index"
 
     # Auth routes
-    get "/auth/github", to: "auth#check_github_auth", as: :check_github_auth
+    get "/auth/github", to: "auth#check_github_auth", as: :auth_request
     get "/auth/github/callback", to: "auth#callback", as: :callback_auth
     delete "/logout", to: "auth#destroy"
 

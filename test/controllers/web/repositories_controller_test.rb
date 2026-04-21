@@ -24,27 +24,22 @@ module Web
         ].to_json,
         headers: { "Content-Type" => "application/json" }
       )
-    end
 
-    def sign_in
+      # Авторизуемся в setup
       post login_as_user_path, params: { user_id: @user.id }
     end
 
     test "should get index" do
-      sign_in
       get repositories_path
       assert_response :success
     end
 
     test "should get new" do
-      sign_in
       get new_repository_path
       assert_response :success
     end
 
     test "should create repository" do
-      sign_in
-
       assert_difference("Repository.count", 1) do
         post repositories_path, params: { repository: { github_id: "123" } }
       end
@@ -54,8 +49,6 @@ module Web
     end
 
     test "should not create non-ruby repository" do
-      sign_in
-
       stub_request(:get, /api.github.com\/user\/repos/).to_return(
         status: 200,
         body: [
@@ -80,6 +73,9 @@ module Web
     end
 
     test "should redirect to root if not logged in" do
+      # Выходим из системы
+      delete logout_path
+
       get repositories_path
       assert_redirected_to root_path
       assert_equal "Please login first", flash[:alert]

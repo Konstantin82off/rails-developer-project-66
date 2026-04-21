@@ -15,9 +15,8 @@ module Web
     end
 
     test "should redirect to github auth" do
-      get check_github_auth_path
+      get auth_request_path
       assert_response :redirect
-      # Проверяем, что редирект содержит правильный путь
       assert_match "/auth/github", response.redirect_url
     end
 
