@@ -6,14 +6,22 @@ require "webmock/minitest"
 
 WebMock.disable_net_connect!(allow_localhost: true)
 
+class ActionDispatch::IntegrationTest
+  # Переопределяем метод get для всех тестов
+  def get(path, **kwargs)
+    kwargs[:headers] = { "Accept" => "text/html" }.merge(kwargs[:headers] || {})
+    super(path, **kwargs)
+  end
+
+  def post(path, **kwargs)
+    kwargs[:headers] = { "Accept" => "text/html" }.merge(kwargs[:headers] || {})
+    super(path, **kwargs)
+  end
+end
+
 module ActiveSupport
   class TestCase
-    # Run tests in parallel with specified workers
     parallelize(workers: :number_of_processors)
-
-    # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
-
-    # Add more helper methods to be used by all tests here...
   end
 end

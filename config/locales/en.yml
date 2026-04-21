@@ -9,6 +9,13 @@ en:
     failure: "Authentication failed"
     logout_success: "Logged out successfully"
   
+  home:
+    title: "GitHub Quality Analyzer"
+    description: "Automated quality analysis of your GitHub repositories"
+    features:
+      track: "Track changes, receive error reports and improve code quality"
+    project_in_development: "Project in development"
+  
   repositories:
     index:
       title: "Repositories"

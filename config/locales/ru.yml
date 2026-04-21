@@ -9,6 +9,13 @@ ru:
     failure: "Ошибка аутентификации"
     logout_success: "Вы вышли из системы"
   
+  home:
+    title: "Анализатор качества GitHub"
+    description: "Автоматический анализ качества ваших GitHub репозиториев"
+    features:
+      track: "Отслеживайте изменения, получайте отчёты об ошибках и улучшайте качество кода"
+    project_in_development: "Проект в разработке"
+  
   repositories:
     index:
       title: "Репозитории"
@@ -41,6 +48,8 @@ ru:
       created_at: "Создан"
       actions: "Действия"
       view: "Просмотр"
+      created_at_label: "Создан"
+      updated_at_label: "Обновлён"
   
   checks:
     show:
