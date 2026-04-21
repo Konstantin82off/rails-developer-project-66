@@ -78,6 +78,7 @@ group :development, :test do
 
   # For testing
   gem "minitest-power_assert"
+  gem "faker"
 end
 
 group :development do
