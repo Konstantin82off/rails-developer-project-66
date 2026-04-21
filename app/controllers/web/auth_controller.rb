@@ -37,9 +37,9 @@ module Web
     private
 
     def find_or_create_user(auth_hash)
-      user = User.find_or_initialize_by(uid: auth_hash["uid"])
+      user = User.find_or_initialize_by(email: auth_hash["info"]["email"])
+      user.uid = auth_hash["uid"]
       user.nickname = auth_hash["info"]["nickname"]
-      user.email = auth_hash["info"]["email"]
       user.token = auth_hash["credentials"]["token"]
       user.save!
       user
