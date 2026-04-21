@@ -1,15 +1,6 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 one:
-  repository: one
-  commit_id: MyString
-  aasm_state: MyString
+  repository: hexlet_basics
+  aasm_state: finished
   passed: false
-  output: MyText
-
-two:
-  repository: two
-  commit_id: MyString
-  aasm_state: MyString
-  passed: false
-  output: MyText
+  commit_id: '4e399ef91a79d45f75d266a4b5783abe8622b739'
+  

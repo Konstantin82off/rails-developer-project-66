@@ -1,19 +1,14 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  name: MyString
-  github_id: 1
-  full_name: MyString
-  language: MyString
-  clone_url: MyString
-  ssh_url: MyString
+hexlet_basics:
   user: one
+  name: one
+  full_name: Hexlet/hexlet-basics
+  language: javascript
+  github_id: 123
 
-two:
-  name: MyString
-  github_id: 1
-  full_name: MyString
-  language: MyString
-  clone_url: MyString
-  ssh_url: MyString
-  user: two
+without_checks:
+  user: one
+  name: hexlet-cv
+  full_name: Hexlet/hexlet-cv
+  language: ruby
+  github_id: 345
+  

@@ -14,10 +14,16 @@ module Web
       OmniAuth.config.test_mode = false
     end
 
+    test "should redirect to github auth" do
+      get check_github_auth_path
+      assert_response :redirect
+      # Проверяем, что редирект содержит правильный путь
+      assert_match "/auth/github", response.redirect_url
+    end
+
     test "should handle auth failure" do
       OmniAuth.config.mock_auth[:github] = :invalid_credentials
       get callback_auth_path
-      # OmniAuth сам перенаправляет на /auth/failure
       assert_response :redirect
       assert_match "/auth/failure", response.redirect_url
     end

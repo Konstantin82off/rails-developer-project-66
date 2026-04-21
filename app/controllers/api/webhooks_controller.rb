@@ -13,7 +13,7 @@ module Api
         check = repository.checks.create!(commit_id: payload["after"])
         RepositoryCheckJob.perform_later(check.id)
 
-        head :ok
+        render json: { id: repository.id, full_name: repository.full_name }, status: :ok
       else
         head :not_found
       end

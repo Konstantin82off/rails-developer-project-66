@@ -2,6 +2,10 @@
 
 module Web
   class AuthController < ApplicationController
+    def check_github_auth
+      redirect_to "/auth/github"
+    end
+
     def callback
       set_default_format
       auth_hash = request.env["omniauth.auth"]
