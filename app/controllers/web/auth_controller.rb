@@ -16,8 +16,13 @@ module Web
       end
 
       user = find_or_create_user(auth_hash)
-      session[:user_id] = user.id
 
+      unless user
+        redirect_to root_path, alert: t("auth.failure")
+        return
+      end
+
+      session[:user_id] = user.id
       redirect_to root_path, notice: t("auth.success")
     end
 
@@ -29,8 +34,15 @@ module Web
 
     # Only for testing
     def login_as_user
-      user = User.find(params[:user_id])
-      session[:user_id] = user.id
+      user = if params[:email].present?
+        User.find_by(email: params[:email])
+      elsif params[:user_id].present?
+        User.find(params[:user_id])
+      else
+        User.first
+      end
+
+      session[:user_id] = user.id if user
       head :ok
     end
 
@@ -41,8 +53,13 @@ module Web
       user.uid = auth_hash["uid"]
       user.nickname = auth_hash["info"]["nickname"]
       user.token = auth_hash["credentials"]["token"]
-      user.save!
-      user
+
+      if user.save
+        user
+      else
+        Rails.logger.error "Failed to save user: #{user.errors.full_messages}"
+        nil
+      end
     end
   end
 end
