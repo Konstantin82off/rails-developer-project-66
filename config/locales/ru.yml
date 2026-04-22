@@ -1,29 +1,37 @@
 ru:
+  web:
+    home:
+      index:
+        title: "Анализатор качества GitHub"
+        description: "Автоматический анализ качества ваших GitHub репозиториев"
+        track: "Отслеживайте изменения, получайте отчёты об ошибках и улучшайте качество кода"
+        project_in_development: "Проект в разработке"
+    
+    auth:
+      success: "Вход выполнен успешно!"
+      failure: "Ошибка аутентификации"
+      logout_success: "Вы вышли из системы"
+    
+    repositories:
+      repository_added: "Репозиторий %{name} успешно добавлен"
+      repository_not_ruby: "Репозиторий не является Ruby-проектом или не существует"
+    
+    checks:
+      check_created: "Проверка создана и обрабатывается"
+  
   app_name: "Анализатор качества GitHub"
   welcome: "Добро пожаловать,"
   
-  # Auth
   auth:
     login: "Войти через GitHub"
     logout: "Выйти"
     logout_success: "Вы вышли из системы"
-    success: "Вход выполнен успешно!"
-    failure: "Ошибка аутентификации"
   
-  # Flash messages
   flash:
     please_login: "Пожалуйста, войдите в систему"
     check_created: "Проверка создана и обрабатывается"
     repository_added: "Репозиторий %{name} успешно добавлен"
     repository_not_ruby: "Репозиторий не является Ruby-проектом или не существует"
-  
-  # Views
-  home:
-    index:
-      title: "Анализатор качества GitHub"
-      description: "Автоматический анализ качества ваших GitHub репозиториев"
-      track: "Отслеживайте изменения, получайте отчёты об ошибках и улучшайте качество кода"
-      project_in_development: "Проект в разработке"
   
   repositories:
     index:

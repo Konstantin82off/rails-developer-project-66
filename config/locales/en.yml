@@ -1,29 +1,37 @@
 en:
+  web:
+    home:
+      index:
+        title: "GitHub Quality Analyzer"
+        description: "Automated quality analysis of your GitHub repositories"
+        track: "Track changes, receive error reports and improve code quality"
+        project_in_development: "Project in development"
+    
+    auth:
+      success: "Successfully logged in!"
+      failure: "Authentication failed"
+      logout_success: "Logged out successfully"
+    
+    repositories:
+      repository_added: "Repository %{name} was successfully added."
+      repository_not_ruby: "Repository is not a Ruby project or does not exist."
+    
+    checks:
+      check_created: "Check was created and is being processed"
+  
   app_name: "GitHub Quality Analyzer"
   welcome: "Welcome,"
   
-  # Auth
   auth:
     login: "Login with GitHub"
     logout: "Logout"
     logout_success: "Logged out successfully"
-    success: "Successfully logged in!"
-    failure: "Authentication failed"
   
-  # Flash messages
   flash:
     please_login: "Please login first"
     check_created: "Check was created and is being processed"
     repository_added: "Repository %{name} was successfully added."
     repository_not_ruby: "Repository is not a Ruby project or does not exist."
-  
-  # Views
-  home:
-    index:
-      title: "GitHub Quality Analyzer"
-      description: "Automated quality analysis of your GitHub repositories"
-      track: "Track changes, receive error reports and improve code quality"
-      project_in_development: "Project in development"
   
   repositories:
     index:
