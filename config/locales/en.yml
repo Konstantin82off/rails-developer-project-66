@@ -2,10 +2,11 @@ en:
   web:
     home:
       index:
-        title: "GitHub Quality Analyzer"
-        description: "Automated quality analysis of your GitHub repositories"
-        track: "Track changes, receive error reports and improve code quality"
-        project_in_development: "Project in development"
+        hello_title: "Hello from Hexlet!"
+        hello_subtitle: "Practical programming courses"
+        project_title: "Repository Quality Analyzer"
+        project_description: "A service that helps automatically track the quality of repositories on GitHub. It tracks changes and runs them through built-in analyzers. Then generates reports and sends them to the user."
+        learn_more: "Learn more"
     
     auth:
       success: "Successfully logged in!"
@@ -19,12 +20,20 @@ en:
     checks:
       check_created: "Check was created and is being processed"
   
+  nav:
+    home: "Home"
+  
+  footer:
+    copyright: "© Hexlet Ltd, %{year}"
+      
   app_name: "GitHub Quality Analyzer"
   welcome: "Welcome,"
   
   auth:
     login: "Login with GitHub"
     logout: "Logout"
+    success: "Successfully logged in!"
+    failure: "Authentication failed"
     logout_success: "Logged out successfully"
   
   flash:
