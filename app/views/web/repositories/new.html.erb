@@ -1,37 +1,37 @@
-<div class="container mt-4">
-  <h1>New</h1>
-  
-  <%= link_to "Back to repositories", repositories_path, class: "btn btn-secondary mb-3" %>
-  
-  <% if @github_repos.any? %>
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Language</th>
-          <th>Last check passed</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @github_repos.each do |repo| %>
-          <tr>
-            <td>
-              <% if repo.language&.downcase == "ruby" %>
-                <%= form_tag repositories_path, method: :post, style: "display: inline;" do %>
-                  <%= hidden_field_tag "repository[github_id]", repo.id %>
-                  <%= submit_tag repo.full_name, class: "btn btn-link p-0" %>
-                <% end %>
-              <% else %>
-                <%= repo.full_name %>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <div class="mb-4">
+            <label class="form-label">
+              Github
+              <span class="text-muted" style="cursor: help;" data-bs-toggle="tooltip" data-bs-placement="right" title="<%= t(".tooltip") %>">*</span>
+            </label>
+
+            <% if @github_repos.any? %>
+              <%= form_tag repositories_path, method: :post, id: "new-repository-form" do %>
+                <div class="mb-3">
+                  <%= select_tag "repository[github_id]",
+                      options_for_select(
+                        @github_repos.select do |r|
+                          r.language&.downcase == "ruby" ||
+                          r.language&.downcase == "javascript"
+                        end.map { |r| ["#{r.full_name} (#{r.language})", r.id] }
+                      ),
+                      prompt: t(".select_repository"),
+                      class: "form-select",
+                      id: "repository_github_id" %>
+                </div>
+
+                <%= submit_tag t(".add_button"), class: "btn btn-success" %>
               <% end %>
-            </td>
-            <td><%= repo.language || "Unknown" %></td>
-            <td>false</td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  <% else %>
-    <p>No Ruby repositories found in your GitHub account.</p>
-  <% end %>
+            <% else %>
+              <p class="text-muted"><%= t(".no_ruby_repos") %></p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -24,12 +24,13 @@ ru:
         false: "false"
         no_checks: "Нет проверок"
       new:
-        title: "Добавление репозитория"
-        back: "Назад к репозиториям"
-        select_repository: "Выберите репозиторий для добавления:"
-        choose_repository: "Выберите репозиторий:"
-        add_button: "Добавить репозиторий"
+        select_repository: "Выберите репозиторий"
+        add_button: "Создать репозиторий"
         no_ruby_repos: "Ruby-репозитории не найдены в вашем аккаунте GitHub"
+        github_cannot_be_blank: "Github не может быть пустым"
+        tooltip: "Выберите репозиторий из списка ваших GitHub репозиториев"
+      create:
+        github_cannot_be_blank: "Github не может быть пустым"
       show:
         title: "Информация о репозитории"
         run_check: "Запустить проверку"

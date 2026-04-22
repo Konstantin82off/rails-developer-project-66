@@ -24,12 +24,13 @@ en:
         false: "false"
         no_checks: "No checks"
       new:
-        title: "Add Repository"
-        back: "Back to repositories"
-        select_repository: "Select a repository to add:"
-        choose_repository: "Choose repository:"
-        add_button: "Add Repository"
+        select_repository: "Select a repository"
+        add_button: "Create repository"
         no_ruby_repos: "No Ruby repositories found in your GitHub account."
+        github_cannot_be_blank: "Github cannot be blank"
+        tooltip: "Select a repository from your GitHub repositories list"
+      create:
+        github_cannot_be_blank: "Github cannot be blank"
       show:
         title: "Repository Info"
         run_check: "Run Check"

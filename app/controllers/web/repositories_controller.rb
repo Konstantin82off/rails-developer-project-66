@@ -27,8 +27,16 @@ module Web
     def create
       set_default_format
       return redirect_to root_path, alert: t("flash.please_login") unless current_user
-      repo_params = params.require(:repository).permit(:github_id)
-      github_repo = fetch_user_repositories.find { |r| r.id.to_s == repo_params[:github_id] }
+
+      github_id = params[:repository][:github_id]
+
+      if github_id.blank?
+        flash[:alert] = t(".github_cannot_be_blank")
+        redirect_to new_repository_path
+        return
+      end
+
+      github_repo = fetch_user_repositories.find { |r| r.id.to_s == github_id }
 
       if github_repo && github_repo.language&.downcase == "ruby"
         repository = current_user.repositories.create!(
