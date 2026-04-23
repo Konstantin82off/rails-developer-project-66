@@ -31,7 +31,7 @@ module Web
       github_id = params[:repository][:github_id]
 
       if github_id.blank?
-        flash[:alert] = t(".github_cannot_be_blank")
+        flash[:alert] = t("web.repositories.create.github_cannot_be_blank")
         redirect_to new_repository_path
         return
       end

@@ -47,22 +47,22 @@ en:
         no_checks: "No checks"
         run_first_check: "Run first check"
         back: "Back to repositories"
-    
-    checks:
-      show:
-        title: "Check #%{id}"
-        back: "Back to repository"
-        commit_id: "Commit ID"
-        state: "State"
-        passed: "Passed"
-        pending: "Pending"
-        created_at: "Created at"
-        updated_at: "Updated at"
-        output: "Output"
-        success: "Success! No offenses detected."
-        warning: "Warning! Rubocop found offenses in this repository."
-        error: "Error! The check failed to complete. Please try again."
-      check_created: "Check was created and is being processed"
+      checks:
+        show:
+          title: "Check #%{id}"
+          back_to_repository: "Back to repository"
+          created_at: "Created at"
+          status: "Status"
+          passed: "Check passed"
+          offenses_count: "Offenses count"
+          commit_id: "Commit ID"
+          message: "Message"
+          rule: "Rule"
+          line_column: "Line:Column"
+          finished: "Finished"
+          pending: "Pending"
+          true: "true"
+          false: "false"
   
   nav:
     home: "Home"
@@ -84,5 +84,58 @@ en:
   flash:
     please_login: "Please login first"
     check_created: "Check was created and is being processed"
+    check_started: "Check started"
     repository_added: "Repository %{name} was successfully added."
     repository_not_ruby: "Repository is not a Ruby project or does not exist."
+  
+  date:
+    abbr_day_names:
+    - Sun
+    - Mon
+    - Tue
+    - Wed
+    - Thu
+    - Fri
+    - Sat
+    day_names:
+    - Sunday
+    - Monday
+    - Tuesday
+    - Wednesday
+    - Thursday
+    - Friday
+    - Saturday
+    abbr_month_names:
+    - 
+    - Jan
+    - Feb
+    - Mar
+    - Apr
+    - May
+    - Jun
+    - Jul
+    - Aug
+    - Sep
+    - Oct
+    - Nov
+    - Dec
+    month_names:
+    - 
+    - January
+    - February
+    - March
+    - April
+    - May
+    - June
+    - July
+    - August
+    - September
+    - October
+    - November
+    - December
+  
+  time:
+    formats:
+      default: "%d %B %Y, %H:%M"
+      long: "%d %B %Y, %H:%M"
+      short: "%d %b, %H:%M"

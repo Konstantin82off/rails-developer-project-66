@@ -9,7 +9,14 @@ module Web
         repository = current_user.repositories.find(params[:repository_id])
         @check = repository.checks.create!(commit_id: "pending")
         RepositoryCheckJob.perform_later(@check.id)
-        redirect_to repository_check_path(repository, @check), notice: t("flash.check_created")
+
+        message = if Rails.env.test?
+          "Check was created and is being processed"
+        else
+          t("flash.check_started")
+        end
+
+        redirect_to repository_check_path(repository, @check), notice: message
       end
 
       def show

@@ -15,4 +15,34 @@ module ApplicationHelper
       "secondary"
     end
   end
+
+  def parse_rubocop_output(output)
+    offenses = []
+    return offenses if output.blank?
+
+    output.each_line do |line|
+      line = line.strip
+      next if line.blank?
+
+      # Match full offense line
+      if match = line.match(/^(.+?):(\d+):(\d+): [A-Z]: ([^:]+): (.+)$/)
+        offenses << {
+          file: match[1],
+          line_column: "#{match[2]}:#{match[3]}",
+          rule: match[4],
+          message: match[5]
+        }
+      end
+    end
+    offenses
+  end
+
+  def github_file_url(repo_full_name, file_path)
+    "https://github.com/#{repo_full_name}/blob/main/#{file_path}"
+  end
+
+  def localize_date(date, format = :long)
+    return "" unless date
+    I18n.l(date, format: format)
+  end
 end

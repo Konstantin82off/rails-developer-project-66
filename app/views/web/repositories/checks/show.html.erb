@@ -2,54 +2,75 @@
   <meta http-equiv="refresh" content="3">
 <% end %>
 
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Check #<%= @check.id %></h1>
-    <%= link_to "Back to repository", repository_path(@repository), class: "btn btn-secondary" %>
-  </div>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <div class="mb-4">
+            <%= link_to t(".back_to_repository"), repository_path(@repository), class: "btn btn-primary" %>
+          </div>
 
-  <div class="card mb-4">
-    <div class="card-body">
-      <dl class="row">
-        <dt class="col-sm-3">Repository</dt>
-        <dd class="col-sm-9"><%= @repository.full_name %></dd>
-        
-        <dt class="col-sm-3">Commit ID</dt>
-        <dd class="col-sm-9"><%= @check.commit_id %></dd>
-        
-        <dt class="col-sm-3">State</dt>
-        <dd class="col-sm-9"><span class="badge bg-<%= check_state_badge(@check.aasm_state) %>"><%= @check.aasm_state %></span></dd>
-        
-        <dt class="col-sm-3">Passed</dt>
-        <dd class="col-sm-9"><%= @check.passed.nil? ? "Pending" : @check.passed %></dd>
-        
-        <dt class="col-sm-3">Created at</dt>
-        <dd class="col-sm-9"><%= @check.created_at.strftime("%B %d, %Y %H:%M") %></dd>
-        
-        <% if @check.updated_at != @check.created_at %>
-          <dt class="col-sm-3">Updated at</dt>
-          <dd class="col-sm-9"><%= @check.updated_at.strftime("%B %d, %Y %H:%M") %></dd>
-        <% end %>
-      </dl>
+          <h1 class="display-6 fw-semibold mb-4"><%= t(".title", id: @check.id) %></h1>
+
+          <div class="mb-4">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <th style="font-weight: normal;"><%= t(".created_at") %></th>
+                  <td><%= localize_date(@check.created_at, :long) %></td>
+                </tr>
+                <tr>
+                  <th style="font-weight: normal;"><%= t(".status") %></th>
+                  <td><span class="badge bg-<%= check_state_badge(@check.aasm_state) %>"><%= @check.aasm_state == "finished" ? t(".finished") : @check.aasm_state %></span></td>
+                </tr>
+                <tr>
+                  <th style="font-weight: normal;"><%= t(".passed") %></th>
+                  <td><%= @check.passed.nil? ? t(".pending") : (@check.passed ? t(".true") : t(".false")) %></td>
+                </tr>
+                <tr>
+                  <th style="font-weight: normal;"><%= t(".offenses_count") %></th>
+                  <td><%= @check.offenses_count || 0 %></td>
+                </tr>
+                <tr>
+                  <th style="font-weight: normal;"><%= t(".commit_id") %></th>
+                  <td>
+                    <% if @check.commit_id && @check.commit_id != "pending" %>
+                      <%= link_to @check.commit_id.first(8), "https://github.com/#{@repository.full_name}/commit/#{@check.commit_id}", target: "_blank" %>
+                    <% else %>
+                      <%= @check.commit_id %>
+                    <% end %>
+                  </dd>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <% if @check.output.present? %>
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th><%= t(".message") %></th>
+                  <th><%= t(".rule") %></th>
+                  <th><%= t(".line_column") %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% parse_rubocop_output(@check.output).each do |offense| %>
+                  <tr>
+                    <td style="white-space: normal;">
+                      <%= link_to offense[:file], github_file_url(@repository.full_name, offense[:file]), target: "_blank" %><br>
+                      <%= offense[:message] %>
+                    </td>
+                    <td style="white-space: normal;"><%= offense[:rule] %></td>
+                    <td style="white-space: normal;"><%= offense[:line_column] %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
-
-  <% if @check.output.present? %>
-    <h3>Output</h3>
-    <pre class="bg-light p-3 rounded"><%= @check.output %></pre>
-  <% end %>
-  
-  <% if @check.aasm_state == "finished" && @check.passed == false %>
-    <div class="alert alert-warning mt-3">
-      <strong>Warning!</strong> Rubocop found offenses in this repository.
-    </div>
-  <% elsif @check.aasm_state == "finished" && @check.passed == true %>
-    <div class="alert alert-success mt-3">
-      <strong>Success!</strong> No offenses detected by Rubocop.
-    </div>
-  <% elsif @check.aasm_state == "failed" %>
-    <div class="alert alert-danger mt-3">
-      <strong>Error!</strong> The check failed to complete. Please try again.
-    </div>
-  <% end %>
 </div>

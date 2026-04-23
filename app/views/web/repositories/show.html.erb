@@ -30,11 +30,17 @@
               <tbody>
                 <% @repository.checks.order(created_at: :desc).each do |check| %>
                   <tr>
-                    <td><%= check.id %></dd>
-                    <td><span class="badge bg-<%= check_state_badge(check.aasm_state) %>"><%= check.aasm_state == "finished" ? t(".finished") : check.aasm_state %></span></dd>
-                    <td><%= check.commit_id&.first(8) %>...</dd>
-                    <td><%= check.passed.nil? ? t(".pending") : (check.passed ? t(".true") : t(".false")) %></dd>
-                    <td><%= check.created_at.strftime("%d %b, %H:%M") %></dd>
+                    <td><%= link_to check.id, repository_check_path(@repository, check) %></td>
+                    <td><span class="badge bg-<%= check_state_badge(check.aasm_state) %>"><%= check.aasm_state == "finished" ? t(".finished") : check.aasm_state %></span></td>
+                    <td>
+                      <% if check.commit_id && check.commit_id != "pending" %>
+                        <%= link_to check.commit_id.first(8), "https://github.com/#{@repository.full_name}/commit/#{check.commit_id}", target: "_blank" %>
+                      <% else %>
+                        <%= check.commit_id&.first(8) %>...
+                      <% end %>
+                    </td>
+                    <td><%= check.passed.nil? ? t(".pending") : (check.passed ? t(".true") : t(".false")) %></td>
+                    <td><%= check.created_at.strftime("%d %b, %H:%M") %></td>
                   </tr>
                 <% end %>
               </tbody>
