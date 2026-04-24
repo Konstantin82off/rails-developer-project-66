@@ -43,3 +43,13 @@ ActiveSupport.on_load(:action_dispatch_integration_test) do
     @current_user = User.find_by(id: session[:user_id])
   end
 end
+
+class ActionDispatch::IntegrationTest
+  setup do
+    User.find_or_create_by!(email: "one@test.io") do |user|
+      user.nickname = "testuser"
+      user.token = "fake_token"
+      user.uid = "12345"
+    end
+  end
+end
