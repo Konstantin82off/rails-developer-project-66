@@ -3,6 +3,8 @@ class Repository::Check < ApplicationRecord
 
   belongs_to :repository
 
+  validates :commit_id, presence: true
+
   aasm column: :aasm_state do
     state :created, initial: true
     state :cloning
