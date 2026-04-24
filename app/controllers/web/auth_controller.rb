@@ -34,15 +34,8 @@ module Web
 
     # Only for testing
     def login_as_user
-      user = if params[:email].present?
-        User.find_by(email: params[:email])
-      elsif params[:user_id].present?
-        User.find(params[:user_id])
-      else
-        User.first
-      end
-
-      session[:user_id] = user.id if user
+      user = User.find(params[:user_id])
+      session[:user_id] = user.id
       head :ok
     end
 

@@ -1,3 +1,5 @@
+<% content_for :title, t(".title", id: @check.id) %>
+
 <% if @check.aasm_state == "cloning" || @check.aasm_state == "checking" %>
   <meta http-equiv="refresh" content="3">
 <% end %>
@@ -43,7 +45,7 @@
                   </dd>
                 </tr>
               </tbody>
-            </table>
+            </tr>
           </div>
 
           <% if @check.output.present? %>
@@ -61,9 +63,9 @@
                     <td style="white-space: normal;">
                       <%= link_to offense[:file], github_file_url(@repository.full_name, offense[:file]), target: "_blank" %><br>
                       <%= offense[:message] %>
-                    </td>
-                    <td style="white-space: normal;"><%= offense[:rule] %></td>
-                    <td style="white-space: normal;"><%= offense[:line_column] %></td>
+                    </dd>
+                    <td style="white-space: normal;"><%= offense[:rule] %></dd>
+                    <td style="white-space: normal;"><%= offense[:line_column] %></dd>
                   </tr>
                 <% end %>
               </tbody>
