@@ -12,9 +12,9 @@
         <span class="nav-item nav-link"><%= t("welcome") %> <%= current_user.nickname %></span>
         <%= link_to t("auth.logout"), logout_path, class: "nav-item nav-link", data: { turbo_method: :delete } %>
       <% else %>
-        <a href="/auth/github" class="nav-item nav-link">
+        <%= button_to auth_request_path, method: :post, data: { turbo: false }, class: "nav-item nav-link btn btn-link" do %>
           <i class="bi bi-github me-1"></i> <%= t("auth.login") %>
-        </a>
+        <% end %>
       <% end %>
     </div>
   </div>
