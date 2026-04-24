@@ -1,4 +1,9 @@
 ru:
+  layouts:
+    application:
+      app_name: "Анализатор качества GitHub"
+      copyright: "© Hexlet Ltd, %{year}"
+  
   web:
     home:
       index:
@@ -67,12 +72,6 @@ ru:
   nav:
     home: "Главная"
     repositories: "Репозитории"
-  
-  footer:
-    copyright: "© Hexlet Ltd, %{year}"
-  
-  app_name: "Анализатор качества GitHub"
-  welcome: "Добро пожаловать,"
   
   auth:
     login: "Войти с помощью GitHub"

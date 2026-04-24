@@ -1,4 +1,9 @@
 en:
+  layouts:
+    application:
+      app_name: "GitHub Quality Analyzer"
+      copyright: "© Hexlet Ltd, %{year}"
+  
   web:
     home:
       index:
@@ -67,12 +72,6 @@ en:
   nav:
     home: "Home"
     repositories: "Repositories"
-  
-  footer:
-    copyright: "© Hexlet Ltd, %{year}"
-  
-  app_name: "GitHub Quality Analyzer"
-  welcome: "Welcome,"
   
   auth:
     login: "Login with GitHub"
