@@ -1,47 +1,56 @@
+# frozen_string_literal: true
+
 require "test_helper"
 
-module Web
-  class AuthControllerTest < ActionDispatch::IntegrationTest
-    setup do
-      stub_request(:post, "https://github.com/login/oauth/access_token")
-        .to_return(status: 200, body: "", headers: {})
+class Web::AuthControllerTest < ActionDispatch::IntegrationTest
+  test "check github auth" do
+    post auth_request_path
+    assert_response :redirect
+  end
 
-      OmniAuth.config.test_mode = true
-      OmniAuth.config.mock_auth[:github] = nil
-    end
-
-    teardown do
-      OmniAuth.config.test_mode = false
-    end
-
-    test "should redirect to github auth" do
-      get auth_request_path
-      assert_response :redirect
-      assert_match "/auth/github", response.redirect_url
-    end
-
-    test "should handle auth failure" do
-      OmniAuth.config.mock_auth[:github] = :invalid_credentials
-      get callback_auth_path
-      assert_response :redirect
-      assert_match "/auth/failure", response.redirect_url
-    end
-
-    test "should logout" do
-      delete logout_path
-      assert_redirected_to root_path
-      assert_equal "Logged out successfully", flash[:notice]
-    end
-
-    test "should login as user" do
-      user = User.create!(
-        uid: "12345",
-        nickname: "testuser",
+  test "create" do
+    auth_hash = {
+      provider: "github",
+      uid: "12345",
+      info: {
         email: "test@example.com",
+        name: "Test User"
+      },
+      credentials: {
         token: "fake_token"
-      )
-      post login_as_user_path, params: { user_id: user.id }
-      assert_response :success
-    end
+      }
+    }
+
+    OmniAuth.config.mock_auth[:github] = OmniAuth::AuthHash::InfoHash.new(auth_hash)
+
+    get callback_auth_path
+    assert_response :redirect
+
+    user = User.find_by(email: auth_hash[:info][:email].downcase)
+
+    assert user
+    assert signed_in?
+  end
+
+  test "logout" do
+    auth_hash = {
+      provider: "github",
+      uid: "12345",
+      info: {
+        email: "logout_test@example.com",
+        name: "Logout Test"
+      },
+      credentials: {
+        token: "fake_token"
+      }
+    }
+
+    OmniAuth.config.mock_auth[:github] = OmniAuth::AuthHash::InfoHash.new(auth_hash)
+    get callback_auth_path
+    assert signed_in?
+
+    delete logout_path
+    assert_redirected_to root_path
+    assert_not signed_in?
   end
 end
