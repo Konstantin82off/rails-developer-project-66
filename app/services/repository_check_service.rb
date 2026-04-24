@@ -36,11 +36,17 @@ class RepositoryCheckService
     when :finished
       @check.complete_check!
     end
-    @check.save!
+
+    unless @check.save
+      error_msg = I18n.t("services.repository_check.failed_to_save",
+        id: @check.id,
+        errors: @check.errors.full_messages.join(", "))
+      Rails.logger.error error_msg
+      raise error_msg
+    end
   end
 
   def clone_repository
-    # Пропускаем клонирование в тестовой среде
     return if Rails.env.test?
 
     @repo_path = Rails.root.join("tmp", "repositories", @repository.id.to_s, @check.id.to_s)
@@ -61,7 +67,6 @@ class RepositoryCheckService
   end
 
   def run_linter
-    # Заглушка для тестовой среды
     if Rails.env.test?
       @check.update!(passed: true, output: "Test passed")
       return
@@ -75,7 +80,6 @@ class RepositoryCheckService
       output: result[:output]
     )
 
-    # Отправляем email, если проверка не прошла
     CheckMailer.failure_report(@check.id).deliver_later unless @check.passed
   end
 
@@ -87,7 +91,6 @@ class RepositoryCheckService
     )
     Rails.logger.error "Check #{@check.id} failed: #{error.message}"
 
-    # Отправляем email при ошибке выполнения проверки
     CheckMailer.failure_report(@check.id).deliver_later
   end
 
