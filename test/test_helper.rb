@@ -17,14 +17,14 @@ module ActiveSupport
   end
 end
 
-ActiveSupport.on_load(:action_dispatch_integration_test) do
+class ActionDispatch::IntegrationTest
   def sign_in(user, _options = {})
     auth_hash = {
       provider: "github",
       uid: "12345",
       info: {
         email: user.email,
-        name: user.name || user.nickname
+        name: user.nickname
       }
     }
 
@@ -41,15 +41,5 @@ ActiveSupport.on_load(:action_dispatch_integration_test) do
     return @current_user if defined?(@current_user)
 
     @current_user = User.find_by(id: session[:user_id])
-  end
-end
-
-class ActionDispatch::IntegrationTest
-  setup do
-    User.find_or_create_by!(email: "one@test.io") do |user|
-      user.nickname = "testuser"
-      user.token = "fake_token"
-      user.uid = "12345"
-    end
   end
 end
