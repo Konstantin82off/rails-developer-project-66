@@ -8,9 +8,8 @@ Rails.application.routes.draw do
   scope module: :web do
     root "home#index"
 
-    get "/auth/github", to: "auth#check_github_auth", as: :auth_request
-    post "/auth/github", to: "auth#check_github_auth", as: :auth_post_request
-    get "/auth/github/callback", to: "auth#callback", as: :callback_auth
+    post "/auth/:provider", to: "auth#request", as: :auth_request
+    get "/auth/:provider/callback", to: "auth#callback", as: :callback_auth
     delete "/logout", to: "auth#destroy"
 
     resources :repositories, only: [ :index, :new, :create, :show ] do
