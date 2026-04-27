@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-ENV["RAILS_ENV"] ||= "test"
-require_relative "../config/environment"
-require "rails/test_help"
-require "mocha/minitest"
-require "webmock/minitest"
+ENV['RAILS_ENV'] ||= 'test'
+require_relative '../config/environment'
+require 'rails/test_help'
+require 'mocha/minitest'
+require 'webmock/minitest'
 
 OmniAuth.config.test_mode = true
 
@@ -20,8 +20,8 @@ end
 class ActionDispatch::IntegrationTest
   def sign_in(user, _options = {})
     auth_hash = {
-      provider: "github",
-      uid: "12345",
+      provider: 'github',
+      uid: '12345',
       info: {
         email: user.email,
         name: user.nickname
@@ -30,7 +30,7 @@ class ActionDispatch::IntegrationTest
 
     OmniAuth.config.mock_auth[:github] = OmniAuth::AuthHash::InfoHash.new(auth_hash)
 
-    get callback_auth_url("github")
+    get callback_auth_url('github')
   end
 
   def signed_in?

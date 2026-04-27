@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "open3"
-require "fileutils"
+require 'open3'
+require 'fileutils'
 
 class RepositoryCheckService
   attr_reader :check, :repository
@@ -37,19 +37,19 @@ class RepositoryCheckService
       @check.complete_check!
     end
 
-    unless @check.save
-      error_msg = I18n.t("services.repository_check.failed_to_save",
-        id: @check.id,
-        errors: @check.errors.full_messages.join(", "))
-      Rails.logger.error error_msg
-      raise error_msg
-    end
+    return if @check.save
+
+    error_msg = I18n.t('services.repository_check.failed_to_save',
+                       id: @check.id,
+                       errors: @check.errors.full_messages.join(', '))
+    Rails.logger.error error_msg
+    raise error_msg
   end
 
   def clone_repository
     return if Rails.env.test?
 
-    @repo_path = Rails.root.join("tmp", "repositories", @repository.id.to_s, @check.id.to_s)
+    @repo_path = Rails.root.join('tmp', 'repositories', @repository.id.to_s, @check.id.to_s)
     FileUtils.mkdir_p(@repo_path)
 
     clone_url = @repository.clone_url
@@ -68,7 +68,7 @@ class RepositoryCheckService
 
   def run_linter
     if Rails.env.test?
-      @check.update!(passed: true, output: "Test passed")
+      @check.update!(passed: true, output: 'Test passed')
       return
     end
 

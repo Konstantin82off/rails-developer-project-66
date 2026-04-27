@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Repository::Check < ApplicationRecord
   include AASM
 
@@ -25,7 +27,7 @@ class Repository::Check < ApplicationRecord
     end
 
     event :fail do
-      transitions from: [ :cloning, :checking ], to: :failed
+      transitions from: %i[cloning checking], to: :failed
     end
   end
 end

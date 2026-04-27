@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "open3"
-require "json"
+require 'open3'
+require 'json'
 
 class JavascriptLinter
   def run(repo_path)
@@ -13,8 +13,8 @@ class JavascriptLinter
     if stdout.present?
       begin
         results = JSON.parse(stdout)
-        offenses_count = results.sum { |file| file["messages"].size }
-        passed = offenses_count == 0 && status.exitstatus == 0
+        offenses_count = results.sum { |file| file['messages'].size }
+        passed = offenses_count.zero? && status.exitstatus.zero?
 
         output = format_output(results)
       rescue JSON::ParserError
@@ -22,8 +22,8 @@ class JavascriptLinter
         output = stdout + stderr
       end
     else
-      passed = status.exitstatus == 0
-      output = stderr.presence || "No offenses detected"
+      passed = status.exitstatus.zero?
+      output = stderr.presence || 'No offenses detected'
     end
 
     {
@@ -42,11 +42,12 @@ class JavascriptLinter
   private
 
   def format_output(results)
-    output = ""
+    output = ''
     results.each do |file|
-      next if file["messages"].empty?
+      next if file['messages'].empty?
+
       output += "\n#{file['filePath']}:\n"
-      file["messages"].each do |message|
+      file['messages'].each do |message|
         output += "  Line #{message['line']}: #{message['message']} (#{message['ruleId']})\n"
       end
     end
