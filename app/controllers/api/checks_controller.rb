@@ -13,7 +13,10 @@ class Api::ChecksController < ApplicationController
       return
     end
 
-    check = repository.checks.new(commit_id: payload["after"])
+    # Если commit_id не передан, используем значение по умолчанию
+    commit_id = payload["after"].presence || "unknown"
+
+    check = repository.checks.new(commit_id: commit_id)
 
     if check.save
       RepositoryCheckJob.perform_later(check.id)
