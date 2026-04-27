@@ -1,17 +1,12 @@
 require "test_helper"
 
 class Api::ChecksControllerTest < ActionDispatch::IntegrationTest
-  # Принудительно загружаем все фикстуры, как в hexlet-check
   fixtures :all
 
   setup do
-    @user = users(:one)
     @repository = repositories(:without_checks)
-
-    # Убеждаемся, что репозиторий принадлежит пользователю (как в фикстуре)
-    if @repository.user != @user
-      @repository.update!(user: @user)
-    end
+    @user = users(:one)
+    @repository.update!(user: @user) if @repository.user_id != @user.id
   end
 
   test "POST /api/checks should create check and return repository info" do
@@ -24,7 +19,7 @@ class Api::ChecksControllerTest < ActionDispatch::IntegrationTest
     }.to_json
 
     assert_difference("Repository::Check.count", 1) do
-      post api_checks_path, params: payload, headers: { "Content-Type" => "application/json" }
+      post api_checks_path, params: payload, headers: { "Content-Type": "application/json" }
     end
 
     assert_response :success
@@ -41,7 +36,7 @@ class Api::ChecksControllerTest < ActionDispatch::IntegrationTest
       after: "abc123"
     }.to_json
 
-    post api_checks_path, params: payload, headers: { "Content-Type" => "application/json" }
+    post api_checks_path, params: payload, headers: { "Content-Type": "application/json" }
 
     assert_response :not_found
   end
