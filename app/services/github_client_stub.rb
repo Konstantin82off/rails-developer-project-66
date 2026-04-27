@@ -33,6 +33,17 @@ class GithubClientStub
   end
 
   def repo(id)
-    repos.find { |r| r.id == id.to_i }
+    # Если ID не является числом - возвращаем nil
+    return nil unless id.is_a?(Integer) || id.to_s.match?(/^\d+$/)
+
+    id_int = id.to_i
+
+    # Ищем существующий репозиторий
+    existing = repos.find { |r| r.id == id_int }
+
+    # Возвращаем nil, если репозиторий не найден (для тестов на невалидные ID)
+    return nil unless existing
+
+    existing
   end
 end

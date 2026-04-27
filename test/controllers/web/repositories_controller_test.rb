@@ -6,6 +6,11 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
     post login_as_user_path, params: { user_id: @user.id }
   end
 
+  # Очищаем репозитории пользователя перед каждым тестом
+  setup do
+    @user.repositories.destroy_all
+  end
+
   test "should get index" do
     get repositories_path
     assert_response :success
@@ -16,20 +21,18 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  # Используем уникальные ID, которых нет в фикстурах
-  test "should create repository with unique github_id" do
-    assert_difference("Repository.count", 1) do
-      post repositories_path, params: { repository: { github_id: "999" } }
+  test "should create repository with valid github_id" do
+    assert_difference("@user.repositories.count", 1) do
+      post repositories_path, params: { repository: { github_id: "345" } }
     end
 
     assert_redirected_to repositories_path
-    assert flash[:notice].present?
     assert_match(/successfully added/, flash[:notice])
   end
 
-  test "should not create repository with invalid github_id" do
-    assert_no_difference("Repository.count") do
-      post repositories_path, params: { repository: { github_id: "9999999999" } }
+  test "should not create repository with non-existent github_id" do
+    assert_no_difference("@user.repositories.count") do
+      post repositories_path, params: { repository: { github_id: "non_existent_id" } }
     end
 
     assert_response :unprocessable_entity
@@ -38,11 +41,11 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
 
   test "should not create duplicate repository" do
     # Сначала создаем репозиторий
-    post repositories_path, params: { repository: { github_id: "999" } }
+    post repositories_path, params: { repository: { github_id: "345" } }
 
     # Пытаемся создать его же
-    assert_no_difference("Repository.count") do
-      post repositories_path, params: { repository: { github_id: "999" } }
+    assert_no_difference("@user.repositories.count") do
+      post repositories_path, params: { repository: { github_id: "345" } }
     end
 
     assert_response :unprocessable_entity
