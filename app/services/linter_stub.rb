@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class LinterStub
-  def self.run(repo_path)
+  def run(repo_path)
     {
       passed: true,
-      output: "No offenses detected",
+      output: "Stub linter passed",
       exit_status: 0
     }
   end

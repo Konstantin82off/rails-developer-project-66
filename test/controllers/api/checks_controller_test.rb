@@ -2,14 +2,14 @@ require "test_helper"
 
 class Api::ChecksControllerTest < ActionDispatch::IntegrationTest
   setup do
-    # Используем пользователя из фикстуры
+    # Берем пользователя из фикстуры
     @user = users(:one)
 
-    # Используем репозиторий "without_checks" из фикстуры (github_id: 345)
+    # Берем репозиторий из фикстуры without_checks (github_id: 345, full_name: Hexlet/hexlet-cv)
     @repository = repositories(:without_checks)
 
-    # Убедимся, что репозиторий принадлежит пользователю
-    @repository.update!(user: @user)
+    # Убеждаемся, что репозиторий привязан к пользователю
+    @repository.update!(user: @user) if @repository.user != @user
   end
 
   test "POST /api/checks should create check and return repository info" do

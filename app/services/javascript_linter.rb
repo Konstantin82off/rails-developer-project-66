@@ -4,7 +4,7 @@ require "open3"
 require "json"
 
 class JavascriptLinter
-  def self.run(repo_path)
+  def run(repo_path)
     # Запускаем ESLint с JSON форматтером, используя наш конфиг
     command = "npx eslint --format json --no-eslintrc --config #{Rails.root.join('.eslintrc.js')} ."
 
@@ -39,7 +39,9 @@ class JavascriptLinter
     }
   end
 
-  def self.format_output(results)
+  private
+
+  def format_output(results)
     output = ""
     results.each do |file|
       next if file["messages"].empty?

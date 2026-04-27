@@ -3,7 +3,7 @@
 require "open3"
 
 class RubocopLinter
-  def self.run(repo_path)
+  def run(repo_path)
     stdout, stderr, status = Open3.capture3("rubocop", chdir: repo_path)
 
     {
