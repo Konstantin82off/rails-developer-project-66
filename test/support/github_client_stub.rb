@@ -1,36 +1,24 @@
 # frozen_string_literal: true
 
-class GithubClientStub
-  def initialize(token = nil)
-    @token = token
-  end
+RepositoryInfo = Struct.new(:id, :full_name, :name, :language, :clone_url, :ssh_url)
+HookInfo = Struct.new(:id, :active)
 
+class GithubClientStub
   def repos
     [
-      OpenStruct.new(
-        id: 123,
-        full_name: "Hexlet/hexlet-basics",
-        name: "hexlet-basics",
-        language: "javascript",
-        clone_url: "https://github.com/Hexlet/hexlet-basics.git",
-        ssh_url: "git@github.com:Hexlet/hexlet-basics.git"
-      ),
-      OpenStruct.new(
-        id: 345,
-        full_name: "Hexlet/hexlet-cv",
-        name: "hexlet-cv",
-        language: "ruby",
-        clone_url: "https://github.com/Hexlet/hexlet-cv.git",
-        ssh_url: "git@github.com:Hexlet/hexlet-cv.git"
-      )
+      RepositoryInfo.new(123, "Hexlet/hexlet-basics", "hexlet-basics", "javascript", "https://github.com/Hexlet/hexlet-basics.git", "git@github.com:Hexlet/hexlet-basics.git"),
+      RepositoryInfo.new(345, "Hexlet/hexlet-cv", "hexlet-cv", "ruby", "https://github.com/Hexlet/hexlet-cv.git", "git@github.com:Hexlet/hexlet-cv.git")
     ]
   end
 
-  def repo(full_name)
-    repos.find { |r| r.full_name == full_name }
+  def repo(id)
+    id_int = id.to_i
+    existing = repos.find { |r| r.id == id_int }
+    return existing if existing
+    RepositoryInfo.new(id_int, "user/repo-#{id_int}", "repo-#{id_int}", "ruby", "https://github.com/user/repo-#{id_int}.git", "git@github.com:user/repo-#{id_int}.git")
   end
 
-  def create_hook(repo_full_name, config, events)
-    OpenStruct.new(id: 12345678, active: true)
+  def create_hook(*)
+    HookInfo.new(12_345_678, true)
   end
 end
