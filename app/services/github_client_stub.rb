@@ -20,30 +20,29 @@ class GithubClientStub
         language: "Ruby",
         clone_url: "https://github.com/Hexlet/hexlet-cv.git",
         ssh_url: "git@github.com:Hexlet/hexlet-cv.git"
-      ),
-      OpenStruct.new(
-        id: 999,
-        name: "new-repo",
-        full_name: "testuser/new-repo",
-        language: "Ruby",
-        clone_url: "https://github.com/testuser/new-repo.git",
-        ssh_url: "git@github.com:testuser/new-repo.git"
       )
     ]
   end
 
   def repo(id)
-    # Если ID не является числом - возвращаем nil
+    # Для строк с буквами и для ID = 0 возвращаем nil
     return nil unless id.is_a?(Integer) || id.to_s.match?(/^\d+$/)
 
     id_int = id.to_i
+    return nil if id_int == 0
 
     # Ищем существующий репозиторий
     existing = repos.find { |r| r.id == id_int }
+    return existing if existing
 
-    # Возвращаем nil, если репозиторий не найден (для тестов на невалидные ID)
-    return nil unless existing
-
-    existing
+    # Для любого числового ID > 0, которого нет в списке, возвращаем динамический репозиторий
+    OpenStruct.new(
+      id: id_int,
+      name: "repo-#{id_int}",
+      full_name: "user/repo-#{id_int}",
+      language: "Ruby",
+      clone_url: "https://github.com/user/repo-#{id_int}.git",
+      ssh_url: "git@github.com:user/repo-#{id_int}.git"
+    )
   end
 end
