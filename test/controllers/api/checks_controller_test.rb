@@ -2,29 +2,23 @@ require "test_helper"
 
 class Api::ChecksControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @user = User.create!(
-      uid: "12345",
-      nickname: "testuser",
-      email: "test@example.com",
-      token: "fake_token"
-    )
+    # Используем пользователя из фикстуры
+    @user = users(:one)
 
-    @repository = @user.repositories.create!(
-      name: "test-repo",
-      github_id: 123,
-      full_name: "testuser/test-repo",
-      language: "ruby",
-      clone_url: "https://github.com/testuser/test-repo.git",
-      ssh_url: "git@github.com:testuser/test-repo.git"
-    )
+    # Используем репозиторий "without_checks" из фикстуры (github_id: 345)
+    @repository = repositories(:without_checks)
+
+    # Убедимся, что репозиторий принадлежит пользователю
+    @repository.update!(user: @user)
   end
 
   test "POST /api/checks should create check and return repository info" do
     payload = {
       repository: {
+        id: @repository.github_id,
         full_name: @repository.full_name
       },
-      after: "abc123"
+      after: "4e399ef91a79d45f75d266a4b5783abe8622b739"
     }.to_json
 
     assert_difference("Repository::Check.count", 1) do

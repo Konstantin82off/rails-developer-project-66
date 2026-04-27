@@ -9,15 +9,18 @@ class Api::ChecksController < ApplicationController
     repository = Repository.find_by(full_name: payload["repository"]["full_name"])
 
     if repository
-      check = repository.checks.create!(commit_id: payload["after"])
-      RepositoryCheckJob.perform_later(check.id)
+      check = repository.checks.new(commit_id: payload["after"])
 
-      render json: { id: repository.id, full_name: repository.full_name }, status: :ok
+      if check.save
+        RepositoryCheckJob.perform_later(check.id)
+        render json: { id: repository.id, full_name: repository.full_name }, status: :ok
+      else
+        head :unprocessable_entity
+      end
     else
       head :not_found
     end
-  rescue JSON::ParserError, StandardError => e
-    Rails.logger.error "Webhook error: #{e.message}"
-    head :unprocessable_entity
+  rescue JSON::ParserError
+    head :bad_request
   end
 end
