@@ -1,22 +1,17 @@
 require "test_helper"
 
 class Api::ChecksControllerTest < ActionDispatch::IntegrationTest
+  # Принудительно загружаем все фикстуры, как в hexlet-check
+  fixtures :all
+
   setup do
     @user = users(:one)
+    @repository = repositories(:without_checks)
 
-    # Гарантированно создаем репозиторий для теста, если его нет
-    @repository = Repository.find_by(github_id: 345)
-    unless @repository
-      @repository = @user.repositories.create!(
-        name: "hexlet-cv",
-        github_id: 345,
-        full_name: "Hexlet/hexlet-cv",
-        language: "ruby",
-        clone_url: "https://github.com/Hexlet/hexlet-cv.git",
-        ssh_url: "git@github.com:Hexlet/hexlet-cv.git"
-      )
+    # Убеждаемся, что репозиторий принадлежит пользователю (как в фикстуре)
+    if @repository.user != @user
+      @repository.update!(user: @user)
     end
-    @repository.update!(user: @user) if @repository.user != @user
   end
 
   test "POST /api/checks should create check and return repository info" do
