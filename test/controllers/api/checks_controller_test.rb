@@ -2,13 +2,20 @@ require "test_helper"
 
 class Api::ChecksControllerTest < ActionDispatch::IntegrationTest
   setup do
-    # Берем пользователя из фикстуры
     @user = users(:one)
 
-    # Берем репозиторий из фикстуры without_checks (github_id: 345, full_name: Hexlet/hexlet-cv)
-    @repository = repositories(:without_checks)
-
-    # Убеждаемся, что репозиторий привязан к пользователю
+    # Гарантированно создаем репозиторий для теста, если его нет
+    @repository = Repository.find_by(github_id: 345)
+    unless @repository
+      @repository = @user.repositories.create!(
+        name: "hexlet-cv",
+        github_id: 345,
+        full_name: "Hexlet/hexlet-cv",
+        language: "ruby",
+        clone_url: "https://github.com/Hexlet/hexlet-cv.git",
+        ssh_url: "git@github.com:Hexlet/hexlet-cv.git"
+      )
+    end
     @repository.update!(user: @user) if @repository.user != @user
   end
 
