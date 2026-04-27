@@ -28,17 +28,27 @@ class GithubClientStub
     ]
   end
 
-  def find(id)
+  def repo(id)
+    if id.to_s == "456"
+      return OpenStruct.new(
+        id: 456,
+        name: "js-repo",
+        full_name: "testuser/js-repo",
+        language: "JavaScript",
+        clone_url: "https://github.com/testuser/js-repo.git",
+        ssh_url: "git@github.com:testuser/js-repo.git"
+      )
+    end
+
     repos.find { |r| r.id == id.to_i } || OpenStruct.new(
       id: id.to_i,
-      name: "dynamic-repo",
-      full_name: "dynamic/dynamic-repo",
+      name: "repo-#{id}",
+      full_name: "dynamic/repo-#{id}",
       language: "Ruby",
-      clone_url: "https://github.com/dynamic/dynamic-repo.git",
-      ssh_url: "git@github.com:dynamic/dynamic-repo.git"
+      clone_url: "https://github.com/dynamic/repo-#{id}.git",
+      ssh_url: "git@github.com:dynamic/repo-#{id}.git"
     )
   end
-  alias repo find
 
   def commits(repo_full_name)
     [ OpenStruct.new(sha: "abc123def456") ]

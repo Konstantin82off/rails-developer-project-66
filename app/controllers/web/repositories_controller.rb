@@ -35,7 +35,7 @@ class Web::RepositoriesController < Web::ApplicationController
       return
     end
 
-    github_repo = fetch_user_repositories.find { |r| r.id.to_s == github_id }
+    github_repo = fetch_user_repositories(github_id)
 
     if github_repo && github_repo.language&.downcase == "ruby"
       repository = current_user.repositories.create!(
@@ -54,12 +54,17 @@ class Web::RepositoriesController < Web::ApplicationController
 
   private
 
-  def fetch_user_repositories
+  def fetch_user_repositories(github_id = nil)
     client_class = ApplicationContainer[:github_client]
     client = client_class.new(access_token: current_user.token, auto_paginate: true)
-    client.repos
+
+    if github_id
+      client.repo(github_id)
+    else
+      client.repos
+    end
   rescue Octokit::Error => e
     Rails.logger.error "GitHub API error: #{e.message}"
-    []
+    github_id ? nil : []
   end
 end
