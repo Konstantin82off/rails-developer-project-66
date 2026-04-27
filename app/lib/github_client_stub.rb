@@ -28,6 +28,18 @@ class GithubClientStub
     ]
   end
 
+  def find(id)
+    repos.find { |r| r.id == id.to_i } || OpenStruct.new(
+      id: id.to_i,
+      name: "dynamic-repo",
+      full_name: "dynamic/dynamic-repo",
+      language: "Ruby",
+      clone_url: "https://github.com/dynamic/dynamic-repo.git",
+      ssh_url: "git@github.com:dynamic/dynamic-repo.git"
+    )
+  end
+  alias repo find
+
   def commits(repo_full_name)
     [ OpenStruct.new(sha: "abc123def456") ]
   end
