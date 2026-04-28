@@ -35,7 +35,7 @@ class Web::RepositoriesController < Web::ApplicationController
       return
     end
 
-    github_repo = fetch_user_repositories.find { |r| r.id.to_s == github_id }
+    github_repo = fetch_repository_by_id(github_id)
 
     if github_repo.nil?
       redirect_to new_repository_path, alert: t("flash.repository_not_found")
@@ -66,10 +66,24 @@ class Web::RepositoriesController < Web::ApplicationController
   private
 
   def fetch_user_repositories
-    client = Octokit::Client.new(access_token: current_user.token, auto_paginate: true)
-    client.repos.select { |r| r.language&.downcase == "ruby" }
-  rescue Octokit::Error => e
+    client = ApplicationContainer[:github_client]
+    client = client.call if client.is_a?(Proc)
+    client.repos
+  rescue StandardError => e
     Rails.logger.error "GitHub API error: #{e.message}"
     []
+  end
+
+  def fetch_repository_by_id(github_id)
+    client = ApplicationContainer[:github_client]
+    client = client.call if client.is_a?(Proc)
+    client.repo(github_id)
+  rescue StandardError => e
+    Rails.logger.error "GitHub API error: #{e.message}"
+    nil
+  end
+
+  def set_default_format
+    request.format = :html
   end
 end
