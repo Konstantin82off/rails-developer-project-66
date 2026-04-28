@@ -86,6 +86,8 @@ en:
     check_started: "Check started"
     repository_added: "Repository %{name} was successfully added."
     repository_not_ruby: "Repository is not a Ruby project or does not exist."
+    repository_not_found: "Repository not found"
+    repository_already_added: "Repository already added"
   
   date:
     abbr_day_names:
@@ -143,3 +145,11 @@ en:
     repository_check:
       failed_to_save: "Failed to save check #%{id}: %{errors}"
       failed_to_update_state: "Failed to update check state"
+
+  activerecord:
+    errors:
+      models:
+        repository:
+          attributes:
+            github_id:
+              already_added: "repository already added by you"

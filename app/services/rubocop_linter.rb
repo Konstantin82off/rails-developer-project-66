@@ -3,7 +3,7 @@
 require "open3"
 
 class RubocopLinter
-  def self.run(repo_path)
+  def run(repo_path)
     stdout, stderr, status = Open3.capture3("rubocop", chdir: repo_path)
 
     {
@@ -14,7 +14,7 @@ class RubocopLinter
   rescue Errno::ENOENT
     {
       passed: false,
-      output: "Rubocop not found",
+      output: "Rubocop not found. Please run 'gem install rubocop'",
       exit_status: 1
     }
   end

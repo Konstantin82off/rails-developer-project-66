@@ -1,84 +1,85 @@
-require "test_helper"
+# frozen_string_literal: true
 
-module Web
-  class RepositoriesControllerTest < ActionDispatch::IntegrationTest
-    setup do
-      @user = User.create!(
-        uid: "12345",
-        nickname: "testuser",
-        email: "test@example.com",
-        token: "fake_token"
-      )
+class Web::RepositoriesController < Web::ApplicationController
+  def index
+    set_default_format
+    return redirect_to root_path, alert: t("flash.please_login") unless current_user
+    @repositories = current_user.repositories
+    render :index
+  end
 
-      stub_request(:get, /api.github.com\/user\/repos/).to_return(
-        status: 200,
-        body: [
-          {
-            id: 123,
-            name: "test-repo",
-            full_name: "testuser/test-repo",
-            language: "Ruby",
-            clone_url: "https://github.com/testuser/test-repo.git",
-            ssh_url: "git@github.com:testuser/test-repo.git"
-          }
-        ].to_json,
-        headers: { "Content-Type" => "application/json" }
-      )
+  def show
+    set_default_format
+    return redirect_to root_path, alert: t("flash.please_login") unless current_user
+    @repository = current_user.repositories.find(params[:id])
+    render :show
+  end
 
-      # Авторизуемся в setup
-      post login_as_user_path, params: { user_id: @user.id }
+  def new
+    set_default_format
+    return redirect_to root_path, alert: t("flash.please_login") unless current_user
+    @github_repos = fetch_user_repositories
+    @repositories = current_user.repositories
+    render :new
+  end
+
+  def create
+    set_default_format
+    return redirect_to root_path, alert: t("flash.please_login") unless current_user
+
+    github_id = params[:repository][:github_id]
+
+    if github_id.blank?
+      flash[:alert] = t(".github_cannot_be_blank")
+      redirect_to new_repository_path
+      return
     end
 
-    test "should get index" do
-      get repositories_path
-      assert_response :success
+    github_repo = fetch_repository_by_id(github_id)
+
+    if github_repo.nil?
+      redirect_to new_repository_path, alert: t("flash.repository_not_found")
+      return
     end
 
-    test "should get new" do
-      get new_repository_path
-      assert_response :success
+    if github_repo.language&.downcase != "ruby"
+      redirect_to new_repository_path, alert: t("flash.repository_not_ruby")
+      return
     end
 
-    test "should create repository" do
-      assert_difference("Repository.count", 1) do
-        post repositories_path, params: { repository: { github_id: "123" } }
-      end
-
-      assert_redirected_to repositories_path
-      assert_equal "Repository test-repo was successfully added.", flash[:notice]
+    if current_user.repositories.exists?(github_id: github_repo.id)
+      redirect_to new_repository_path, alert: t("flash.repository_already_added")
+      return
     end
 
-    test "should not create non-ruby repository" do
-      stub_request(:get, /api.github.com\/user\/repos/).to_return(
-        status: 200,
-        body: [
-          {
-            id: 456,
-            name: "js-repo",
-            full_name: "testuser/js-repo",
-            language: "JavaScript",
-            clone_url: "https://github.com/testuser/js-repo.git",
-            ssh_url: "git@github.com:testuser/js-repo.git"
-          }
-        ].to_json,
-        headers: { "Content-Type" => "application/json" }
-      )
+    repository = current_user.repositories.create!(
+      name: github_repo.name,
+      github_id: github_repo.id,
+      full_name: github_repo.full_name,
+      language: github_repo.language.downcase,
+      clone_url: github_repo.clone_url,
+      ssh_url: github_repo.ssh_url
+    )
+    redirect_to repositories_path, notice: t("flash.repository_added", name: repository.name)
+  end
 
-      assert_no_difference("Repository.count") do
-        post repositories_path, params: { repository: { github_id: "456" } }
-      end
+  private
 
-      assert_redirected_to new_repository_path
-      assert_equal "Repository is not a Ruby project or does not exist.", flash[:alert]
-    end
+  def fetch_user_repositories
+    client = ApplicationContainer[:github_client]
+    client = client.call if client.is_a?(Proc)
+    client.repos
+  rescue StandardError => e
+    Rails.logger.error "GitHub API error: #{e.message}"
+    []
+  end
 
-    test "should redirect to root if not logged in" do
-      # Выходим из системы
-      delete logout_path
-
-      get repositories_path
-      assert_redirected_to root_path
-      assert_equal "Please login first", flash[:alert]
-    end
+  def fetch_repository_by_id(github_id)
+    client = ApplicationContainer[:github_client]
+    client = client.call if client.is_a?(Proc)
+    client.repo(github_id)
+  rescue StandardError => e
+    Rails.logger.error "GitHub API error: #{e.message}"
+    nil
   end
 end

@@ -86,6 +86,8 @@ ru:
     check_started: "Проверка началась"
     repository_added: "Репозиторий %{name} успешно добавлен"
     repository_not_ruby: "Репозиторий не является Ruby-проектом или не существует"
+    repository_not_found: "Репозиторий не найден"
+    repository_already_added: "Репозиторий уже добавлен"
   
   date:
     abbr_day_names:
@@ -143,3 +145,11 @@ ru:
     repository_check:
       failed_to_save: "Не удалось сохранить проверку #%{id}: %{errors}"
       failed_to_update_state: "Не удалось обновить состояние проверки"
+
+  activerecord:
+    errors:
+      models:
+        repository:
+          attributes:
+            github_id:
+              already_added: "репозиторий уже добавлен вами"
