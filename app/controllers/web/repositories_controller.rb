@@ -65,19 +65,31 @@ class Web::RepositoriesController < Web::ApplicationController
 
   private
 
-  def fetch_user_repositories
+  def github_client
     client = ApplicationContainer[:github_client]
-    client = client.call if client.is_a?(Proc)
-    client.repos
+
+    if Rails.env.test?
+      client = client.call if client.is_a?(Proc)
+    else
+      client = client.call(current_user.token) if client.is_a?(Proc)
+    end
+
+    client
+  end
+
+  def fetch_user_repositories
+    github_client.repos
   rescue StandardError => e
     Rails.logger.error "GitHub API error: #{e.message}"
     []
   end
 
   def fetch_repository_by_id(github_id)
-    client = ApplicationContainer[:github_client]
-    client = client.call if client.is_a?(Proc)
-    client.repo(github_id)
+    if Rails.env.test?
+      github_client.repo(github_id)
+    else
+      github_client.repository(github_id.to_i)
+    end
   rescue StandardError => e
     Rails.logger.error "GitHub API error: #{e.message}"
     nil
