@@ -2,7 +2,7 @@
 
 Rails.application.routes.draw do
   namespace :api do
-    post "/checks", to: "webhooks#create"
+    post "/checks", to: "checks#create"
   end
 
   scope module: :web do
