@@ -11,6 +11,35 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
       token: "fake_token"
     )
 
+    # Заглушка для GET /user/repos (вызывается в new action)
+    stub_request(:get, "https://api.github.com/user/repos?per_page=100")
+      .to_return(
+        status: 200,
+        body: [
+          { id: 123, name: "test-repo", full_name: "testuser/test-repo", language: "Ruby" },
+          { id: 345, name: "hexlet-cv", full_name: "Hexlet/hexlet-cv", language: "Ruby" }
+        ].to_json,
+        headers: { "Content-Type" => "application/json" }
+      )
+
+    # Заглушка для GET /repositories/:id (вызывается в create action)
+    stub_request(:get, %r{https://api.github.com/repositories/(\d+)})
+      .to_return do |request|
+        id = request.uri.path.split("/").last.to_i
+        # Для ID 123 и 345 возвращаем Ruby репозитории
+        # Для любого другого ID возвращаем JavaScript репозиторий (например 456)
+        language = (id == 123 || id == 345) ? "Ruby" : "JavaScript"
+        body = {
+          id: id,
+          name: id == 123 ? "test-repo" : "repo-#{id}",
+          full_name: id == 123 ? "testuser/test-repo" : "user/repo-#{id}",
+          language: language,
+          clone_url: "https://github.com/user/repo-#{id}.git",
+          ssh_url: "git@github.com:user/repo-#{id}.git"
+        }
+        { status: 200, body: body.to_json, headers: { "Content-Type" => "application/json" } }
+      end
+
     post login_as_user_path, params: { user_id: @user.id }
   end
 
@@ -34,6 +63,7 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not create non-ruby repository" do
+    # ID 456 - вернет JavaScript язык
     assert_no_difference("Repository.count") do
       post repositories_path, params: { repository: { github_id: "456" } }
     end

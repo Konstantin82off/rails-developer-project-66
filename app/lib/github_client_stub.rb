@@ -26,9 +26,20 @@ class GithubClientStub
 
   def repo(id)
     id_int = id.to_i
-    existing = repos.find { |r| r.id == id_int || r.id.to_s == id.to_s }
-    return existing if existing
 
+    # ID 456 - JavaScript (не Ruby)
+    if id_int == 456
+      return OpenStruct.new(
+        id: 456,
+        name: "js-repo",
+        full_name: "testuser/js-repo",
+        language: "JavaScript",
+        clone_url: "https://github.com/testuser/js-repo.git",
+        ssh_url: "git@github.com:testuser/js-repo.git"
+      )
+    end
+
+    # Для любого другого ID - возвращаем Ruby репозиторий
     OpenStruct.new(
       id: id_int,
       name: "repo-#{id_int}",
