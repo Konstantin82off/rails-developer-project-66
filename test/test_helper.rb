@@ -5,7 +5,6 @@ require_relative "../config/environment"
 require "rails/test_help"
 require "mocha/minitest"
 require "webmock/minitest"
-require_relative "support/github_client_stub"
 
 OmniAuth.config.test_mode = true
 
