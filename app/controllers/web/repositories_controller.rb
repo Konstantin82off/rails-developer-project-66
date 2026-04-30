@@ -1,23 +1,22 @@
 # frozen_string_literal: true
 
 class Web::RepositoriesController < Web::ApplicationController
+  before_action :authenticate_user!, except: [ :show ]
+
   def index
     set_default_format
-    return redirect_to root_path, alert: t("flash.please_login") unless current_user
     @repositories = current_user.repositories
     render :index
   end
 
   def show
     set_default_format
-    return redirect_to root_path, alert: t("flash.please_login") unless current_user
     @repository = current_user.repositories.find(params[:id])
     render :show
   end
 
   def new
     set_default_format
-    return redirect_to root_path, alert: t("flash.please_login") unless current_user
     @github_repos = fetch_user_repositories
     @repositories = current_user.repositories
     render :new
@@ -25,7 +24,6 @@ class Web::RepositoriesController < Web::ApplicationController
 
   def create
     set_default_format
-    return redirect_to root_path, alert: t("flash.please_login") unless current_user
 
     github_id = params[:repository][:github_id]
 
@@ -64,6 +62,11 @@ class Web::RepositoriesController < Web::ApplicationController
   end
 
   private
+
+  def authenticate_user!
+    return if current_user
+    redirect_to root_path, alert: t("flash.please_login")
+  end
 
   def github_client
     client = ApplicationContainer[:github_client]
