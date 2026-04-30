@@ -10,15 +10,14 @@ module EslintParser
       line = line.strip
       next if line.blank?
 
-      # Если строка заканчивается на .js (путь к файлу)
-      if line.end_with?('.js') && !line.include?(':')
-        current_file = line
+      if line.include?(".js") && line.end_with?(":")
+        current_file = line.chomp(":")
       elsif current_file && (match = line.match(/Line (\d+): (.+?) \(([^)]+)\)$/))
         offenses << {
           file: current_file,
           line_column: "#{match[1]}:1",
           rule: match[3],
-          message: match[2].gsub(/^['"]|['"]$/, '')  # убираем кавычки
+          message: match[2].gsub(/^['"]|['"]$/, "")
         }
       end
     end
