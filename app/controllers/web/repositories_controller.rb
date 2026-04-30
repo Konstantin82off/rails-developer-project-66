@@ -40,7 +40,6 @@ class Web::RepositoriesController < Web::ApplicationController
       return
     end
 
-    # Разрешаем Ruby и JavaScript
     unless github_repo.language&.downcase == "ruby" || github_repo.language&.downcase == "javascript"
       redirect_to new_repository_path, alert: t("flash.repository_not_supported")
       return
@@ -59,6 +58,9 @@ class Web::RepositoriesController < Web::ApplicationController
       clone_url: github_repo.clone_url,
       ssh_url: github_repo.ssh_url
     )
+
+    create_webhook(repository)
+
     redirect_to repositories_path, notice: t("flash.repository_added", name: repository.name)
   end
 
@@ -70,15 +72,13 @@ class Web::RepositoriesController < Web::ApplicationController
   end
 
   def github_client
-    client = ApplicationContainer[:github_client]
+    client_class = ApplicationContainer[:github_client]
 
     if Rails.env.test?
-      client = client.call if client.is_a?(Proc)
+      client_class.new
     else
-      client = client.call(current_user.token) if client.is_a?(Proc)
+      client_class.new(access_token: current_user.token, auto_paginate: true)
     end
-
-    client
   end
 
   def fetch_user_repositories
@@ -98,6 +98,21 @@ class Web::RepositoriesController < Web::ApplicationController
   rescue StandardError => e
     Rails.logger.error "GitHub API error: #{e.message}"
     nil
+  end
+
+  def create_webhook(repository)
+    return if Rails.env.test?
+
+    webhook_url = Rails.application.routes.url_helpers.api_checks_url(host: ENV.fetch("BASE_URL", "localhost:3000"))
+    client = github_client
+    client.create_hook(
+      repository.full_name,
+      "web",
+      { url: webhook_url, content_type: "json" },
+      { events: [ "push" ], active: true }
+    )
+  rescue StandardError => e
+    Rails.logger.error "Failed to create webhook for #{repository.full_name}: #{e.message}"
   end
 
   def set_default_format
