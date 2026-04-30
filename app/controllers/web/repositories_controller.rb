@@ -81,7 +81,8 @@ class Web::RepositoriesController < Web::ApplicationController
   end
 
   def fetch_user_repositories
-    github_client.repos
+    existing_ids = current_user.repositories.pluck(:github_id)
+    github_client.repos.reject { |r| existing_ids.include?(r.id) }
   rescue StandardError => e
     Rails.logger.error "GitHub API error: #{e.message}"
     []
