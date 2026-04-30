@@ -11,13 +11,17 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
       token: "fake_token"
     )
 
+    @user.repositories.destroy_all
+
     # Заглушка для GET /user/repos (вызывается в new action)
     stub_request(:get, "https://api.github.com/user/repos?per_page=100")
       .to_return(
         status: 200,
         body: [
           { id: 123, name: "test-repo", full_name: "testuser/test-repo", language: "Ruby" },
-          { id: 345, name: "hexlet-cv", full_name: "Hexlet/hexlet-cv", language: "Ruby" }
+          { id: 345, name: "hexlet-cv", full_name: "Hexlet/hexlet-cv", language: "Ruby" },
+          { id: 456, name: "js-repo", full_name: "testuser/js-repo", language: "JavaScript" },
+          { id: 789, name: "py-repo", full_name: "testuser/py-repo", language: "Python" }
         ].to_json,
         headers: { "Content-Type" => "application/json" }
       )
@@ -26,9 +30,7 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
     stub_request(:get, %r{https://api.github.com/repositories/(\d+)})
       .to_return do |request|
         id = request.uri.path.split("/").last.to_i
-        # Для ID 123 и 345 возвращаем Ruby репозитории
-        # Для любого другого ID возвращаем JavaScript репозиторий (например 456)
-        language = (id == 123 || id == 345) ? "Ruby" : "JavaScript"
+        language = [ 123, 345 ].include?(id) ? "Ruby" : (id == 456 ? "JavaScript" : "Python")
         body = {
           id: id,
           name: id == 123 ? "test-repo" : "repo-#{id}",
@@ -54,7 +56,7 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create ruby repository" do
-    assert_difference("Repository.count", 1) do
+    assert_difference("@user.repositories.count", 1) do
       post repositories_path, params: { repository: { github_id: "123" } }
     end
 
@@ -62,14 +64,22 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
     assert_match(/successfully added/, flash[:notice])
   end
 
-  test "should not create non-ruby repository" do
-    # ID 456 - вернет JavaScript язык
-    assert_no_difference("Repository.count") do
+  test "should create javascript repository" do
+    assert_difference("@user.repositories.count", 1) do
       post repositories_path, params: { repository: { github_id: "456" } }
     end
 
+    assert_redirected_to repositories_path
+    assert_match(/successfully added/, flash[:notice])
+  end
+
+  test "should not create unsupported language repository" do
+    assert_no_difference("@user.repositories.count") do
+      post repositories_path, params: { repository: { github_id: "789" } }
+    end
+
     assert_redirected_to new_repository_path
-    assert_match(/not a Ruby project/, flash[:alert])
+    assert_match(/not supported/, flash[:alert])
   end
 
   test "should redirect to root if not logged in" do

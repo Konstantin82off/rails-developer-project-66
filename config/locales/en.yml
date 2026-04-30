@@ -85,7 +85,7 @@ en:
     check_created: "Check was created and is being processed"
     check_started: "Check started"
     repository_added: "Repository %{name} was successfully added."
-    repository_not_ruby: "Repository is not a Ruby project or does not exist."
+    repository_not_supported: "Repository not supported (only Ruby and JavaScript)"
     repository_not_found: "Repository not found"
     repository_already_added: "Repository already added"
   

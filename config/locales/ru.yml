@@ -85,7 +85,7 @@ ru:
     check_created: "Проверка создана и обрабатывается"
     check_started: "Проверка началась"
     repository_added: "Репозиторий %{name} успешно добавлен"
-    repository_not_ruby: "Репозиторий не является Ruby-проектом или не существует"
+    repository_not_supported: "Репозиторий не поддерживается (только Ruby и JavaScript)"
     repository_not_found: "Репозиторий не найден"
     repository_already_added: "Репозиторий уже добавлен"
   

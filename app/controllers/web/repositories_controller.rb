@@ -40,8 +40,9 @@ class Web::RepositoriesController < Web::ApplicationController
       return
     end
 
-    if github_repo.language&.downcase != "ruby"
-      redirect_to new_repository_path, alert: t("flash.repository_not_ruby")
+    # Разрешаем Ruby и JavaScript
+    unless github_repo.language&.downcase == "ruby" || github_repo.language&.downcase == "javascript"
+      redirect_to new_repository_path, alert: t("flash.repository_not_supported")
       return
     end
 
