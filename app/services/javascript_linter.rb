@@ -5,7 +5,7 @@ require "json"
 
 class JavascriptLinter
   def run(repo_path)
-    command = "npx eslint --format json --no-eslintrc --config #{Rails.root.join('.eslintrc.js')} ."
+    command = "npx eslint --format json --no-ignore ."
 
     stdout, stderr, status = Open3.capture3(command, chdir: repo_path)
 

@@ -1,23 +1,22 @@
 # frozen_string_literal: true
 
 class Web::RepositoriesController < Web::ApplicationController
+  before_action :authenticate_user!, except: [ :show ]
+
   def index
     set_default_format
-    return redirect_to root_path, alert: t("flash.please_login") unless current_user
     @repositories = current_user.repositories
     render :index
   end
 
   def show
     set_default_format
-    return redirect_to root_path, alert: t("flash.please_login") unless current_user
     @repository = current_user.repositories.find(params[:id])
     render :show
   end
 
   def new
     set_default_format
-    return redirect_to root_path, alert: t("flash.please_login") unless current_user
     @github_repos = fetch_user_repositories
     @repositories = current_user.repositories
     render :new
@@ -25,7 +24,6 @@ class Web::RepositoriesController < Web::ApplicationController
 
   def create
     set_default_format
-    return redirect_to root_path, alert: t("flash.please_login") unless current_user
 
     github_id = params[:repository][:github_id]
 
@@ -42,8 +40,9 @@ class Web::RepositoriesController < Web::ApplicationController
       return
     end
 
-    if github_repo.language&.downcase != "ruby"
-      redirect_to new_repository_path, alert: t("flash.repository_not_ruby")
+    # Разрешаем Ruby и JavaScript
+    unless github_repo.language&.downcase == "ruby" || github_repo.language&.downcase == "javascript"
+      redirect_to new_repository_path, alert: t("flash.repository_not_supported")
       return
     end
 
@@ -65,6 +64,11 @@ class Web::RepositoriesController < Web::ApplicationController
 
   private
 
+  def authenticate_user!
+    return if current_user
+    redirect_to root_path, alert: t("flash.please_login")
+  end
+
   def github_client
     client = ApplicationContainer[:github_client]
 
@@ -78,7 +82,8 @@ class Web::RepositoriesController < Web::ApplicationController
   end
 
   def fetch_user_repositories
-    github_client.repos
+    existing_ids = current_user.repositories.pluck(:github_id)
+    github_client.repos.reject { |r| existing_ids.include?(r.id) }
   rescue StandardError => e
     Rails.logger.error "GitHub API error: #{e.message}"
     []

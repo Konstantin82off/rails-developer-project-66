@@ -42,10 +42,10 @@
                     <% else %>
                       <%= @check.commit_id %>
                     <% end %>
-                  </dd>
+                  </td>
                 </tr>
               </tbody>
-            </tr>
+            </table>
           </div>
 
           <% if @check.output.present? %>
@@ -58,14 +58,14 @@
                 </tr>
               </thead>
               <tbody>
-                <% parse_rubocop_output(@check.output).each do |offense| %>
+                <% parse_linter_output(@check, @check.output).each do |offense| %>
                   <tr>
                     <td style="white-space: normal;">
-                      <%= link_to offense[:file], github_file_url(@repository.full_name, offense[:file]), target: "_blank" %><br>
+                      <%= link_to offense[:file].split('/').last, github_file_url(@repository.full_name, offense[:file]), target: "_blank" %><br>
                       <%= offense[:message] %>
-                    </dd>
-                    <td style="white-space: normal;"><%= offense[:rule] %></dd>
-                    <td style="white-space: normal;"><%= offense[:line_column] %></dd>
+                    </td>
+                    <td style="white-space: normal;"><%= offense[:rule] %></td>
+                    <td style="white-space: normal;"><%= offense[:line_column] %></td>
                   </tr>
                 <% end %>
               </tbody>
