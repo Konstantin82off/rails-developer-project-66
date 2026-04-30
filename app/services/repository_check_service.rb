@@ -74,7 +74,8 @@ class RepositoryCheckService
 
     Rails.logger.info "=== run_linter: repo_path = #{@repo_path} ==="
     linter_class = LinterFactory.for(@repository.language)
-    result = linter_class.run(@repo_path.to_s)
+    linter = linter_class.new
+    result = linter.run(@repo_path.to_s)
 
     @check.update!(
       passed: result[:passed],
