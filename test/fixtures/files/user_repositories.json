@@ -1,0 +1,34 @@
+[
+  {
+    "id": 123,
+    "name": "test-repo",
+    "full_name": "testuser/test-repo",
+    "language": "Ruby",
+    "clone_url": "https://github.com/testuser/test-repo.git",
+    "ssh_url": "git@github.com:testuser/test-repo.git"
+  },
+  {
+    "id": 345,
+    "name": "hexlet-cv",
+    "full_name": "Hexlet/hexlet-cv",
+    "language": "Ruby",
+    "clone_url": "https://github.com/Hexlet/hexlet-cv.git",
+    "ssh_url": "git@github.com:Hexlet/hexlet-cv.git"
+  },
+  {
+    "id": 456,
+    "name": "js-repo",
+    "full_name": "testuser/js-repo",
+    "language": "JavaScript",
+    "clone_url": "https://github.com/testuser/js-repo.git",
+    "ssh_url": "git@github.com:testuser/js-repo.git"
+  },
+  {
+    "id": 789,
+    "name": "py-repo",
+    "full_name": "testuser/py-repo",
+    "language": "Python",
+    "clone_url": "https://github.com/testuser/py-repo.git",
+    "ssh_url": "git@github.com:testuser/py-repo.git"
+  }
+]
