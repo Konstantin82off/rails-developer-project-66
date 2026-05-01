@@ -6,6 +6,8 @@ gem "rails", "~> 8.0.4"
 gem "propshaft"
 # Use sqlite3 as the database for Active Record
 gem "sqlite3", ">= 2.1"
+# Use PostgreSQL in production
+gem "pg", "~> 1.5", group: :production
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
