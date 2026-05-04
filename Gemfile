@@ -60,6 +60,9 @@ gem "dry-container"
 # State machine
 gem "aasm"
 
+# RuboCop for all environments (including production on Render)
+gem "rubocop-rails-omakase", require: false
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
@@ -69,9 +72,6 @@ group :development, :test do
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
-
-  # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
-  gem "rubocop-rails-omakase", require: false
 
   # Load environment variables from .env
   gem "dotenv-rails"
