@@ -1,6 +1,8 @@
-require_relative "boot"
+# frozen_string_literal: true
 
-require "rails/all"
+require_relative 'boot'
+
+require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -25,10 +27,10 @@ module RailsDeveloperProject66
     # config.eager_load_paths << Rails.root.join("extras")
 
     # Add services to autoload paths
-    config.autoload_paths << Rails.root.join("app/services")
+    config.autoload_paths << Rails.root.join('app/services')
 
     # Set default locale to Russian
     config.i18n.default_locale = :ru
-    config.i18n.available_locales = [ :ru, :en ]
+    config.i18n.available_locales = %i[ru en]
   end
 end

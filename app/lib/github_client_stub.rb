@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require "ostruct"
-require "json"
+require 'ostruct'
+require 'json'
 
 class GithubClientStub
   def repos
-    fixture_path = Rails.root.join("test/fixtures/files/user_repositories.json")
+    fixture_path = Rails.root.join('test/fixtures/files/user_repositories.json')
     content = File.read(fixture_path)
     repositories = JSON.parse(content, symbolize_names: true)
     repositories.map { |repo| OpenStruct.new(repo) }
@@ -21,7 +21,7 @@ class GithubClientStub
       id: id_int,
       name: "repo-#{id_int}",
       full_name: "user/repo-#{id_int}",
-      language: "Ruby",
+      language: 'Ruby',
       clone_url: "https://github.com/user/repo-#{id_int}.git",
       ssh_url: "git@github.com:user/repo-#{id_int}.git"
     )

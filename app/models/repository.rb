@@ -4,9 +4,9 @@ class Repository < ApplicationRecord
   extend Enumerize
 
   belongs_to :user
-  has_many :checks, class_name: "Repository::Check", dependent: :destroy
+  has_many :checks, class_name: 'Repository::Check', dependent: :destroy
 
-  enumerize :language, in: [ :ruby, :javascript ], default: :ruby
+  enumerize :language, in: %i[ruby javascript], default: :ruby
 
   validates :name, presence: true
   validates :github_id, presence: true, uniqueness: { scope: :user_id, message: :already_added }

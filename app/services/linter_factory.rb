@@ -3,9 +3,9 @@
 class LinterFactory
   def self.for(language)
     case language.to_s
-    when "ruby"
+    when 'ruby'
       ApplicationContainer[:linter_ruby]
-    when "javascript"
+    when 'javascript'
       ApplicationContainer[:linter_javascript]
     else
       raise "Unsupported language: #{language}"

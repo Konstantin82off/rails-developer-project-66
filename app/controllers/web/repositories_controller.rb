@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Web::RepositoriesController < Web::ApplicationController
-  before_action :authenticate_user!, except: [ :show ]
+  before_action :authenticate_user!, except: [:show]
 
   def index
     set_default_format
@@ -28,7 +28,7 @@ class Web::RepositoriesController < Web::ApplicationController
     github_id = params[:repository][:github_id]
 
     if github_id.blank?
-      flash[:alert] = t(".github_cannot_be_blank")
+      flash[:alert] = t('.github_cannot_be_blank')
       redirect_to new_repository_path
       return
     end
@@ -36,17 +36,17 @@ class Web::RepositoriesController < Web::ApplicationController
     github_repo = fetch_repository_by_id(github_id)
 
     if github_repo.nil?
-      redirect_to new_repository_path, alert: t("flash.repository_not_found")
+      redirect_to new_repository_path, alert: t('flash.repository_not_found')
       return
     end
 
-    unless github_repo.language&.downcase == "ruby" || github_repo.language&.downcase == "javascript"
-      redirect_to new_repository_path, alert: t("flash.repository_not_supported")
+    unless %w[ruby javascript].include?(github_repo.language&.downcase)
+      redirect_to new_repository_path, alert: t('flash.repository_not_supported')
       return
     end
 
     if current_user.repositories.exists?(github_id: github_repo.id)
-      redirect_to new_repository_path, alert: t("flash.repository_already_added")
+      redirect_to new_repository_path, alert: t('flash.repository_already_added')
       return
     end
 
@@ -61,14 +61,15 @@ class Web::RepositoriesController < Web::ApplicationController
 
     create_webhook(repository)
 
-    redirect_to repositories_path, notice: t("flash.repository_added", name: repository.name)
+    redirect_to repositories_path, notice: t('flash.repository_added', name: repository.name)
   end
 
   private
 
   def authenticate_user!
     return if current_user
-    redirect_to root_path, alert: t("flash.please_login")
+
+    redirect_to root_path, alert: t('flash.please_login')
   end
 
   def github_client
@@ -103,13 +104,13 @@ class Web::RepositoriesController < Web::ApplicationController
   def create_webhook(repository)
     return if Rails.env.test?
 
-    webhook_url = Rails.application.routes.url_helpers.api_checks_url(host: ENV.fetch("BASE_URL", "localhost:3000"))
+    webhook_url = Rails.application.routes.url_helpers.api_checks_url(host: ENV.fetch('BASE_URL', 'localhost:3000'))
     client = github_client
     client.create_hook(
       repository.full_name,
-      "web",
-      { url: webhook_url, content_type: "json" },
-      { events: [ "push" ], active: true }
+      'web',
+      { url: webhook_url, content_type: 'json' },
+      { events: ['push'], active: true }
     )
   rescue StandardError => e
     Rails.logger.error "Failed to create webhook for #{repository.full_name}: #{e.message}"

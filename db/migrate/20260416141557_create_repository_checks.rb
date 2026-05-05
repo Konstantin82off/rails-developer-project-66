@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class CreateRepositoryChecks < ActiveRecord::Migration[8.0]
   def change
     create_table :repository_checks do |t|
       t.references :repository, null: false, foreign_key: true
       t.string :commit_id
       t.string :aasm_state
-      t.boolean :passed
+      t.boolean :passed, default: false, null: false
       t.text :output
 
       t.timestamps

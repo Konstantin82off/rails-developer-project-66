@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
-require "open3"
-require "fileutils"
+require 'open3'
+require 'fileutils'
 
 class RepositoryCheckService
+  include OffenseCounter
+  include RepositoryOperations
+
   attr_reader :check, :repository
 
   def initialize(check_id)
@@ -13,10 +16,8 @@ class RepositoryCheckService
 
   def perform
     update_state(:cloning)
-
     clone_repository
     update_state(:checking)
-
     run_linter
     update_state(:finished)
   rescue StandardError => e
@@ -37,38 +38,18 @@ class RepositoryCheckService
       @check.complete_check!
     end
 
-    unless @check.save
-      error_msg = I18n.t("services.repository_check.failed_to_save",
-        id: @check.id,
-        errors: @check.errors.full_messages.join(", "))
-      Rails.logger.error error_msg
-      raise error_msg
-    end
-  end
+    return if @check.save
 
-  def clone_repository
-    return if Rails.env.test?
-
-    @repo_path = Rails.root.join("tmp", "repositories", @repository.id.to_s, @check.id.to_s)
-    FileUtils.mkdir_p(@repo_path)
-
-    clone_url = @repository.clone_url
-    command = "git clone --depth 1 #{clone_url} #{@repo_path}"
-
-    _stdout, stderr, status = Open3.capture3(command)
-
-    unless status.success?
-      raise "Failed to clone repository: #{stderr}"
-    end
-
-    sha_command = "git -C #{@repo_path} rev-parse HEAD"
-    sha_stdout, _sha_stderr = Open3.capture3(sha_command)
-    @check.update!(commit_id: sha_stdout.strip)
+    error_msg = I18n.t('services.repository_check.failed_to_save',
+                       id: @check.id,
+                       errors: @check.errors.full_messages.join(', '))
+    Rails.logger.error error_msg
+    raise error_msg
   end
 
   def run_linter
     if Rails.env.test?
-      @check.update!(passed: true, output: "Test passed")
+      @check.update!(passed: true, output: 'Test passed', offenses_count: 0)
       return
     end
 
@@ -77,9 +58,12 @@ class RepositoryCheckService
     linter = linter_class.new
     result = linter.run(@repo_path.to_s)
 
+    offenses_count = count_offenses(result[:output], @repository.language)
+
     @check.update!(
       passed: result[:passed],
-      output: result[:output]
+      output: result[:output],
+      offenses_count: offenses_count
     )
 
     CheckMailer.failure_report(@check.id).deliver_later unless @check.passed
@@ -94,9 +78,5 @@ class RepositoryCheckService
     Rails.logger.error "Check #{@check.id} failed: #{error.message}"
 
     CheckMailer.failure_report(@check.id).deliver_later
-  end
-
-  def cleanup
-    FileUtils.rm_rf(@repo_path) if @repo_path && Dir.exist?(@repo_path)
   end
 end

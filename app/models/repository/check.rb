@@ -5,6 +5,8 @@ class Repository::Check < ApplicationRecord
 
   belongs_to :repository
 
+  attribute :passed, :boolean, default: false
+
   validates :commit_id, presence: true
 
   aasm column: :aasm_state do
@@ -27,7 +29,7 @@ class Repository::Check < ApplicationRecord
     end
 
     event :fail do
-      transitions from: [ :cloning, :checking ], to: :failed
+      transitions from: %i[cloning checking], to: :failed
     end
   end
 end
