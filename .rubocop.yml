@@ -15,7 +15,6 @@ AllCops:
     - 'vendor/**/*'
     - 'node_modules/**/*'
     - 'code/tmp/**/*'
-#    - 'tmp/**/*'
   SuggestExtensions: false
 
 Rails:
@@ -47,7 +46,3 @@ Style/AsciiComments:
 
 Metrics/ParameterLists:
   Enabled: false
-
-Style/OpenStructUse:
-  Exclude:
-    - 'app/lib/github_client_stub.rb'

@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
-require 'ostruct'
 require 'json'
 
 class GithubClientStub
+  # Определяем структуры для замены OpenStruct
+  RepoData = Struct.new(:id, :name, :full_name, :language, :clone_url, :ssh_url)
+  HookData = Struct.new(:id, :active)
+
   def repos
     fixture_path = Rails.root.join('test/fixtures/files/user_repositories.json')
     content = File.read(fixture_path)
     repositories = JSON.parse(content, symbolize_names: true)
-    repositories.map { |repo| OpenStruct.new(repo) }
+    repositories.map { |repo| RepoData.new(repo[:id], repo[:name], repo[:full_name], repo[:language], repo[:clone_url], repo[:ssh_url]) }
   end
 
   def repo(id)
@@ -17,17 +20,17 @@ class GithubClientStub
     return existing if existing
 
     # Для любого несуществующего ID возвращаем репозиторий (Ruby по умолчанию)
-    OpenStruct.new(
-      id: id_int,
-      name: "repo-#{id_int}",
-      full_name: "user/repo-#{id_int}",
-      language: 'Ruby',
-      clone_url: "https://github.com/user/repo-#{id_int}.git",
-      ssh_url: "git@github.com:user/repo-#{id_int}.git"
+    RepoData.new(
+      id_int,
+      "repo-#{id_int}",
+      "user/repo-#{id_int}",
+      'Ruby',
+      "https://github.com/user/repo-#{id_int}.git",
+      "git@github.com:user/repo-#{id_int}.git"
     )
   end
 
   def create_hook(*)
-    OpenStruct.new(id: 12_345_678, active: true)
+    HookData.new(12_345_678, true)
   end
 end
