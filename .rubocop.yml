@@ -5,6 +5,8 @@ plugins:
 AllCops:
   NewCops: enable
   Exclude:
+    - 'db/schema.rb'
+    - 'db/migrate/**/*'
     - 'code/bin/**'
     - 'code/db/schema.rb'
     - 'code/db/migrate/**'
@@ -44,13 +46,6 @@ Style/AsciiComments:
   Enabled: false
 
 Metrics/ParameterLists:
-  Enabled: false
-
-# Отключаем проблемные правила (ошибки только в tmp/)
-Performance/CollectionLiteralInLoop:
-  Enabled: false
-
-Style/OneClassPerFile:
   Enabled: false
 
 Style/OpenStructUse:
