@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/OneClassPerFile
+
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 require 'rails/test_help'
@@ -43,4 +45,5 @@ class ActionDispatch::IntegrationTest
     @current_user = User.find_by(id: session[:user_id])
   end
 end
+
 # rubocop:enable Style/OneClassPerFile
