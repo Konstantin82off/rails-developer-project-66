@@ -153,3 +153,12 @@ en:
           attributes:
             github_id:
               already_added: "repository already added by you"
+
+  aasm:
+    repository_check:
+      state:
+        created: "Created"
+        cloning: "Cloning"
+        checking: "Checking"
+        finished: "Finished"
+        failed: "Failed"

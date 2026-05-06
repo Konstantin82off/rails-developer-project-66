@@ -153,3 +153,12 @@ ru:
           attributes:
             github_id:
               already_added: "репозиторий уже добавлен вами"
+  
+  aasm:
+    repository_check:
+      state:
+        created: "Создана"
+        cloning: "Клонирование"
+        checking: "Проверка"
+        finished: "Завершена"
+        failed: "Ошибка"
