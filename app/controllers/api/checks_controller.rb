@@ -10,8 +10,8 @@ class Api::ChecksController < ApplicationController
 
     if repository
       commit_id = payload['after'].presence || 'unknown'
-      check = repository.checks.create!(commit_id: commit_id)
-      RepositoryCheckJob.perform_later(check.id)
+      check = repository.checks.create!(commit_id: commit_id, passed: false)
+      RepositoryCheckJob.perform_now(check.id)
 
       render json: { id: repository.id, full_name: repository.full_name }, status: :ok
     else

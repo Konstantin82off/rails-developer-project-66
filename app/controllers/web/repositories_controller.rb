@@ -62,7 +62,7 @@ class Web::RepositoriesController < Web::ApplicationController
     # Автоматическая проверка при создании репозитория
     unless Rails.env.test?
       check = repository.checks.create!(commit_id: 'pending', passed: false)
-      RepositoryCheckJob.perform_later(check.id)
+      RepositoryCheckJob.perform_now(check.id)
 
       webhook_url = Rails.application.routes.url_helpers.api_checks_url
       github_service.setup_webhook(repository.full_name, webhook_url)
