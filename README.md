@@ -77,3 +77,4 @@ SMTP_PASSWORD=your_smtp_password
 - Rollbar, Octokit, OmniAuth
 - RuboCop, ESLint
 - ActiveJob, AASM
+# Test auto-deploy
