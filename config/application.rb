@@ -32,5 +32,8 @@ module RailsDeveloperProject66
     # Set default locale to Russian
     config.i18n.default_locale = :ru
     config.i18n.available_locales = %i[ru en]
+
+    # Configure default URL options for URL helpers (as required by Hexlet project)
+    Rails.application.routes.default_url_options = { host: ENV.fetch('BASE_URL', nil) }
   end
 end

@@ -19,7 +19,6 @@ class GithubClientStub
     existing = repos.find { |r| r.id == id_int }
     return existing if existing
 
-    # Для любого несуществующего ID возвращаем репозиторий (Ruby по умолчанию)
     RepoData.new(
       id_int,
       "repo-#{id_int}",
@@ -29,6 +28,8 @@ class GithubClientStub
       "git@github.com:user/repo-#{id_int}.git"
     )
   end
+
+  alias repository repo
 
   def create_hook(*)
     HookData.new(12_345_678, true)

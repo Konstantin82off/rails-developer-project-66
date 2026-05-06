@@ -17,7 +17,7 @@ class Web::RepositoriesController < Web::ApplicationController
 
   def new
     set_default_format
-    @github_repos = fetch_user_repositories
+    @github_repos = github_service.fetch_user_repositories(exclude_ids: current_user.repositories.pluck(:github_id))
     @repositories = current_user.repositories
     render :new
   end
@@ -33,7 +33,7 @@ class Web::RepositoriesController < Web::ApplicationController
       return
     end
 
-    github_repo = fetch_repository_by_id(github_id)
+    github_repo = github_service.fetch_repository_by_id(github_id)
 
     if github_repo.nil?
       redirect_to new_repository_path, alert: t('flash.repository_not_found')
@@ -59,7 +59,10 @@ class Web::RepositoriesController < Web::ApplicationController
       ssh_url: github_repo.ssh_url
     )
 
-    create_webhook(repository)
+    unless Rails.env.test?
+      webhook_url = Rails.application.routes.url_helpers.api_checks_url
+      github_service.setup_webhook(repository.full_name, webhook_url)
+    end
 
     redirect_to repositories_path, notice: t('flash.repository_added', name: repository.name)
   end
@@ -82,38 +85,8 @@ class Web::RepositoriesController < Web::ApplicationController
     end
   end
 
-  def fetch_user_repositories
-    existing_ids = current_user.repositories.pluck(:github_id)
-    github_client.repos.reject { |r| existing_ids.include?(r.id) }
-  rescue StandardError => e
-    Rails.logger.error "GitHub API error: #{e.message}"
-    []
-  end
-
-  def fetch_repository_by_id(github_id)
-    if Rails.env.test?
-      github_client.repo(github_id)
-    else
-      github_client.repository(github_id.to_i)
-    end
-  rescue StandardError => e
-    Rails.logger.error "GitHub API error: #{e.message}"
-    nil
-  end
-
-  def create_webhook(repository)
-    return if Rails.env.test?
-
-    webhook_url = Rails.application.routes.url_helpers.api_checks_url(host: ENV.fetch('BASE_URL', 'localhost:3000'))
-    client = github_client
-    client.create_hook(
-      repository.full_name,
-      'web',
-      { url: webhook_url, content_type: 'json' },
-      { events: ['push'], active: true }
-    )
-  rescue StandardError => e
-    Rails.logger.error "Failed to create webhook for #{repository.full_name}: #{e.message}"
+  def github_service
+    @github_service ||= GithubRepositoryService.new(github_client)
   end
 
   def set_default_format
