@@ -24,11 +24,17 @@
                 </tr>
                 <tr>
                   <th style="font-weight: normal;"><%= t(".status") %></th>
-                  <td><span class="badge bg-<%= check_state_badge(@check.aasm_state) %>"><%= @check.aasm_state == "finished" ? t(".finished") : @check.aasm_state %></span></td>
+                  <td>
+                    <span class="badge bg-<%= check_state_badge(@check.aasm_state) %>">
+                      <%= t("aasm.repository_check.state.#{@check.aasm_state}", default: @check.aasm_state) %>
+                    </span>
+                  </td>
                 </tr>
                 <tr>
                   <th style="font-weight: normal;"><%= t(".passed") %></th>
-                  <td><%= @check.passed.nil? ? t(".pending") : (@check.passed ? t(".true") : t(".false")) %></td>
+                  <td>
+                    <%= @check.passed.nil? ? t(".pending") : (@check.passed ? t(".true") : t(".false")) %>
+                  </td>
                 </tr>
                 <tr>
                   <th style="font-weight: normal;"><%= t(".offenses_count") %></th>
@@ -42,7 +48,7 @@
                     <% else %>
                       <%= @check.commit_id %>
                     <% end %>
-                  </td>
+                   </td>
                 </tr>
               </tbody>
             </table>
