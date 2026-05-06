@@ -8,6 +8,9 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # Configure default URL host for test environment
+  Rails.application.routes.default_url_options = { host: 'localhost', port: 3000 }
+
   # While tests run files are not watched, reloading is not necessary.
   config.enable_reloading = false
 
