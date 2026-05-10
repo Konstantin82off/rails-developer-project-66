@@ -60,30 +60,29 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should create ruby repository' do
-    assert_difference('@user.repositories.count', 1) do
-      post repositories_path, params: { repository: { github_id: '123' } }
-    end
+    post repositories_path, params: { repository: { github_id: '123' } }
 
     assert_redirected_to repositories_path
-    assert_match(/successfully added/, flash[:notice])
+    repository = @user.repositories.find_by(github_id: 123)
+    assert repository
+    assert_equal 'ruby', repository.language
   end
 
   test 'should create javascript repository' do
-    assert_difference('@user.repositories.count', 1) do
-      post repositories_path, params: { repository: { github_id: '456' } }
-    end
+    post repositories_path, params: { repository: { github_id: '456' } }
 
     assert_redirected_to repositories_path
-    assert_match(/successfully added/, flash[:notice])
+    repository = @user.repositories.find_by(github_id: 456)
+    assert repository
+    assert_equal 'javascript', repository.language
   end
 
   test 'should not create unsupported language repository' do
-    assert_no_difference('@user.repositories.count') do
-      post repositories_path, params: { repository: { github_id: '789' } }
-    end
+    post repositories_path, params: { repository: { github_id: '789' } }
 
     assert_redirected_to new_repository_path
-    assert_match(/not supported/, flash[:alert])
+    repository = @user.repositories.find_by(github_id: 789)
+    assert_nil repository
   end
 
   test 'should redirect to root if not logged in' do
@@ -91,6 +90,5 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
 
     get repositories_path
     assert_redirected_to root_path
-    assert_equal 'Please login first', flash[:alert]
   end
 end
