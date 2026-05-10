@@ -4,12 +4,7 @@ require 'test_helper'
 
 class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @user = User.create!(
-      uid: '12345',
-      nickname: 'testuser',
-      email: 'test@example.com',
-      token: 'fake_token'
-    )
+    @user = users(:one)
 
     @user.repositories.destroy_all
 
@@ -46,7 +41,7 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
         { status: 200, body: body.to_json, headers: { 'Content-Type' => 'application/json' } }
       end
 
-    post login_as_user_path, params: { user_id: @user.id }
+    sign_in(@user)
   end
 
   test 'should get index' do

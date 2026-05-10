@@ -27,10 +27,13 @@ class ActionDispatch::IntegrationTest
   def sign_in(user, _options = {})
     auth_hash = {
       provider: 'github',
-      uid: '12345',
+      uid: user.uid,
+      credentials: {
+        token: user.token
+      },
       info: {
         email: user.email,
-        name: user.nickname
+        nickname: user.nickname
       }
     }
 
