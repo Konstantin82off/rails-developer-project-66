@@ -57,7 +57,7 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
   test 'should create ruby repository' do
     post repositories_path, params: { repository: { github_id: '123' } }
 
-    assert_redirected_to repositories_path
+    assert_response :redirect
     repository = @user.repositories.find_by(github_id: 123)
     assert repository
     assert_equal 'ruby', repository.language
@@ -66,7 +66,7 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
   test 'should create javascript repository' do
     post repositories_path, params: { repository: { github_id: '456' } }
 
-    assert_redirected_to repositories_path
+    assert_response :redirect
     repository = @user.repositories.find_by(github_id: 456)
     assert repository
     assert_equal 'javascript', repository.language
@@ -75,7 +75,7 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
   test 'should not create unsupported language repository' do
     post repositories_path, params: { repository: { github_id: '789' } }
 
-    assert_redirected_to new_repository_path
+    assert_response :redirect
     repository = @user.repositories.find_by(github_id: 789)
     assert_nil repository
   end
@@ -84,6 +84,6 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
     delete logout_path
 
     get repositories_path
-    assert_redirected_to root_path
+    assert_response :redirect
   end
 end

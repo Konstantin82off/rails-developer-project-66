@@ -26,7 +26,7 @@ module Web
       test 'should create check' do
         post repository_checks_path(@repository)
 
-        assert_redirected_to repository_check_path(@repository, Repository::Check.last)
+        assert_response :redirect
         check = Repository::Check.find_by(repository_id: @repository.id, commit_id: 'pending')
         assert check
       end

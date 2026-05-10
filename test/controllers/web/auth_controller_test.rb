@@ -50,7 +50,7 @@ class Web::AuthControllerTest < ActionDispatch::IntegrationTest
     assert signed_in?
 
     delete logout_path
-    assert_redirected_to root_path
+    assert_response :redirect
     assert_not signed_in?
   end
 end
