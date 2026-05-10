@@ -6,24 +6,21 @@ module Web
   module Repositories
     class ChecksControllerTest < ActionDispatch::IntegrationTest
       setup do
-        @user = User.create!(
-          uid: '12345',
-          nickname: 'testuser',
-          email: 'test@example.com',
-          token: 'fake_token'
-        )
+        @user = users(:one)
+
+        # Очищаем репозитории пользователя перед каждым тестом
+        @user.repositories.destroy_all
 
         @repository = @user.repositories.create!(
           name: 'test-repo',
-          github_id: 123,
+          github_id: 9992,
           full_name: 'testuser/test-repo',
           language: 'ruby',
           clone_url: 'https://github.com/testuser/test-repo.git',
           ssh_url: 'git@github.com:testuser/test-repo.git'
         )
 
-        # Авторизуемся в setup
-        post login_as_user_path, params: { user_id: @user.id }
+        sign_in(@user)
       end
 
       test 'should create check' do

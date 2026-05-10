@@ -4,15 +4,14 @@ require 'test_helper'
 
 class RepositoryCheckJobTest < ActiveJob::TestCase
   setup do
-    @user = User.create!(
-      uid: '12345',
-      nickname: 'testuser',
-      email: 'test@example.com',
-      token: 'fake_token'
-    )
+    @user = users(:one)
+
+    # Очищаем репозитории пользователя перед каждым тестом
+    @user.repositories.destroy_all
+
     @repository = @user.repositories.create!(
       name: 'test-repo',
-      github_id: 123,
+      github_id: 9993,
       full_name: 'testuser/test-repo',
       language: 'ruby',
       clone_url: 'https://github.com/testuser/test-repo.git',
