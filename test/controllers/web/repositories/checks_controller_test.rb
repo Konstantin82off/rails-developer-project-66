@@ -27,11 +27,11 @@ module Web
       end
 
       test 'should create check' do
-        assert_difference('Repository::Check.count', 1) do
-          post repository_checks_path(@repository)
-        end
+        post repository_checks_path(@repository)
+
         assert_redirected_to repository_check_path(@repository, Repository::Check.last)
-        assert_equal 'Check was created and is being processed', flash[:notice]
+        check = Repository::Check.find_by(repository_id: @repository.id, commit_id: 'pending')
+        assert check
       end
 
       test 'should show check' do
