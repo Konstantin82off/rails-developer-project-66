@@ -8,6 +8,10 @@ require 'rails/test_help'
 require 'mocha/minitest'
 require 'webmock/minitest'
 
+# Configure ActiveJob for tests
+ActiveJob::Base.queue_adapter = :test
+ActiveJob::Base.queue_adapter.perform_enqueued_jobs = true
+
 OmniAuth.config.test_mode = true
 
 WebMock.disable_net_connect!(allow_localhost: true)
