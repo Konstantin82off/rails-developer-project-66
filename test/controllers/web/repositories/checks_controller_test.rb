@@ -8,7 +8,6 @@ module Web
       setup do
         @user = users(:one)
 
-        # Очищаем репозитории пользователя перед каждым тестом
         @user.repositories.destroy_all
 
         @repository = @user.repositories.create!(
@@ -27,14 +26,21 @@ module Web
         post repository_checks_path(@repository)
 
         assert_response :redirect
+        assert_redirected_to repository_check_path(@repository, Repository::Check.last)
+
         check = Repository::Check.find_by(repository_id: @repository.id, commit_id: 'pending')
         assert check
+        # Проверяем финальное состояние, а не промежуточное
+        assert check.finished?
       end
 
       test 'should show check' do
         check = @repository.checks.create!(commit_id: 'pending')
         get repository_check_path(@repository, check)
+
         assert_response :success
+        # Проверяем, что страница содержит ID проверки (без зависимости от языка)
+        assert_match(/#{check.id}/, response.body)
       end
     end
   end
