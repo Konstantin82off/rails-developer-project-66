@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Web::RepositoriesController < Web::ApplicationController
-  before_action :authenticate_user!, except: [:show]
+  before_action :authenticate_user!
 
   def index
     set_default_format
@@ -59,7 +59,6 @@ class Web::RepositoriesController < Web::ApplicationController
       ssh_url: github_repo.ssh_url
     )
 
-    # Автоматическая проверка при создании репозитория
     unless Rails.env.test?
       check = repository.checks.create!(commit_id: 'pending', passed: false)
       RepositoryCheckJob.perform_now(check.id)
