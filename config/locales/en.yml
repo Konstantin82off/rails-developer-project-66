@@ -20,6 +20,7 @@ en:
     
     repositories:
       index:
+        page_title: "My Repositories"
         new: "Add"
         no_repositories: "No repositories added."
         name: "Name"

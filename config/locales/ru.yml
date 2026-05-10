@@ -20,6 +20,7 @@ ru:
     
     repositories:
       index:
+        page_title: "Мои репозитории"
         new: "Добавить"
         no_repositories: "Репозитории не добавлены"
         name: "Название"
