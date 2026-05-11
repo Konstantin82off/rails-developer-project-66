@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-module Web
-  class HomeController < ApplicationController
-    def index
-      set_default_format
-    end
-  end
+class Web::HomeController < Web::ApplicationController
+  skip_before_action :authenticate_user!
+
+  def index; end
 end

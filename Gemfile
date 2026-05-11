@@ -95,3 +95,5 @@ group :test do
   gem 'selenium-webdriver'
   gem 'webmock'
 end
+
+gem "pundit", "~> 2.5"

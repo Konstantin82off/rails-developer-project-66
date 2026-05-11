@@ -1,30 +1,24 @@
 # frozen_string_literal: true
 
 class Web::RepositoriesController < Web::ApplicationController
-  before_action :authenticate_user!
-
   def index
-    set_default_format
-    @repositories = current_user.repositories
+    @repositories = policy_scope(Repository)
     render :index
   end
 
   def show
-    set_default_format
-    @repository = current_user.repositories.find(params[:id])
+    @repository = Repository.find(params[:id])
+    authorize @repository
     render :show
   end
 
   def new
-    set_default_format
     @github_repos = github_service.fetch_user_repositories(exclude_ids: current_user.repositories.pluck(:github_id))
     @repositories = current_user.repositories
     render :new
   end
 
   def create
-    set_default_format
-
     github_id = params[:repository][:github_id]
 
     if github_id.blank?
@@ -50,16 +44,13 @@ class Web::RepositoriesController < Web::ApplicationController
       return
     end
 
-    # Создаём репозиторий только с обязательными полями
     repository = current_user.repositories.create!(
       github_id: github_repo.id,
       language: github_repo.language.downcase
     )
 
-    # Запускаем фоновую джобу для заполнения остальных полей и создания вебхука
     UpdateRepositoryInfoJob.perform_later(repository.id)
 
-    # Автоматическая проверка при создании репозитория
     unless Rails.env.test?
       check = repository.checks.create!(commit_id: 'pending', passed: false)
       RepositoryCheckJob.perform_now(check.id)
@@ -69,12 +60,6 @@ class Web::RepositoriesController < Web::ApplicationController
   end
 
   private
-
-  def authenticate_user!
-    return if current_user
-
-    redirect_to root_path, alert: t('flash.please_login')
-  end
 
   def github_client
     client_class = ApplicationContainer[:github_client]
@@ -88,9 +73,5 @@ class Web::RepositoriesController < Web::ApplicationController
 
   def github_service
     @github_service ||= GithubRepositoryService.new(github_client)
-  end
-
-  def set_default_format
-    request.format = :html
   end
 end

@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 class Web::AuthController < Web::ApplicationController
+  skip_before_action :authenticate_user!, only: %i[callback check_github_auth login_as_user]
+
   def check_github_auth
     redirect_to '/auth/github'
   end
 
   def callback
-    set_default_format
     auth_hash = request.env['omniauth.auth']
 
     if auth_hash.nil?
@@ -26,7 +27,6 @@ class Web::AuthController < Web::ApplicationController
   end
 
   def destroy
-    set_default_format
     session[:user_id] = nil
     redirect_to root_path, notice: t('auth.logout_success')
   end

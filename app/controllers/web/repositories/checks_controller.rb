@@ -1,23 +1,28 @@
 # frozen_string_literal: true
 
 class Web::Repositories::ChecksController < Web::ApplicationController
-  def show
-    set_default_format
-    return redirect_to root_path, alert: t('flash.please_login') unless current_user
+  before_action :authenticate_user!
+  before_action :set_repository
+  before_action :authorize_repository
 
-    @repository = current_user.repositories.find(params[:repository_id])
+  def show
     @check = @repository.checks.find(params[:id])
     render :show
   end
 
   def create
-    set_default_format
-    return redirect_to root_path, alert: t('flash.please_login') unless current_user
+    @check = @repository.checks.create!(commit_id: 'pending', passed: false)
+    RepositoryCheckJob.perform_now(@check.id)
+    redirect_to repository_check_path(@repository, @check), notice: t('flash.check_created')
+  end
 
-    repository = current_user.repositories.find(params[:repository_id])
-    @check = repository.checks.create!(commit_id: 'pending')
-    # Выполняем проверку синхронно, без фоновой джобы
-    RepositoryCheckService.new(@check.id).perform
-    redirect_to repository_check_path(repository, @check), notice: t('flash.check_created')
+  private
+
+  def set_repository
+    @repository = Repository.find(params[:repository_id])
+  end
+
+  def authorize_repository
+    authorize @repository
   end
 end
