@@ -15,9 +15,8 @@ class RepositoryCheckService
   end
 
   def perform
-    update_state(:cloning)
-    clone_repository
     update_state(:checking)
+    clone_repository
     run_linter
     update_state(:finished)
   rescue StandardError => e
@@ -30,12 +29,10 @@ class RepositoryCheckService
 
   def update_state(state)
     case state
-    when :cloning
-      @check.start_clone!
     when :checking
-      @check.complete_clone!
+      @check.start!
     when :finished
-      @check.complete_check!
+      @check.complete!
     end
 
     return if @check.save
@@ -70,10 +67,10 @@ class RepositoryCheckService
   end
 
   def handle_error(error)
+    @check.fail!
     @check.update!(
       passed: false,
-      output: error.message,
-      aasm_state: :failed
+      output: error.message
     )
     Rails.logger.error "Check #{@check.id} failed: #{error.message}"
 

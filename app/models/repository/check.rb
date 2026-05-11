@@ -11,25 +11,20 @@ class Repository::Check < ApplicationRecord
 
   aasm column: :aasm_state do
     state :created, initial: true
-    state :cloning
     state :checking
     state :finished
     state :failed
 
-    event :start_clone do
-      transitions from: :created, to: :cloning
+    event :start do
+      transitions from: :created, to: :checking
     end
 
-    event :complete_clone do
-      transitions from: :cloning, to: :checking
-    end
-
-    event :complete_check do
+    event :complete do
       transitions from: :checking, to: :finished
     end
 
     event :fail do
-      transitions from: %i[cloning checking], to: :failed
+      transitions from: %i[created checking], to: :failed
     end
   end
 end

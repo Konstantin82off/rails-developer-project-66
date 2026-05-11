@@ -5,6 +5,8 @@ require 'json'
 class GithubClientStub
   HookData = Struct.new(:id, :active)
 
+  def initialize(*); end
+
   def repos
     fixture_path = Rails.root.join('test/fixtures/files/user_repositories.json')
     content = File.read(fixture_path)
@@ -17,7 +19,6 @@ class GithubClientStub
     existing = repos.find { |r| r.id == id_int }
     return existing if existing
 
-    # Определяем язык для несуществующих ID (для тестов)
     language = case id_int
                when 456
                  'JavaScript'
