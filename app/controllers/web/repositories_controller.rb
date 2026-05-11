@@ -56,15 +56,13 @@ class Web::RepositoriesController < Web::ApplicationController
       language: github_repo.language.downcase
     )
 
-    # Запускаем фоновую джобу для заполнения остальных полей
+    # Запускаем фоновую джобу для заполнения остальных полей и создания вебхука
     UpdateRepositoryInfoJob.perform_later(repository.id)
 
+    # Автоматическая проверка при создании репозитория
     unless Rails.env.test?
       check = repository.checks.create!(commit_id: 'pending', passed: false)
       RepositoryCheckJob.perform_now(check.id)
-
-      webhook_url = Rails.application.routes.url_helpers.api_checks_url
-      github_service.setup_webhook(repository.full_name, webhook_url)
     end
 
     redirect_to repositories_path, notice: t('flash.repository_added', name: repository.github_id)
