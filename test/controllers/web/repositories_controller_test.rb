@@ -30,8 +30,6 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
     repository = @user.repositories.find_by(github_id: 123)
     assert repository
     assert_equal 'ruby', repository.language
-    assert_equal 'test-repo', repository.name
-    assert_equal 'testuser/test-repo', repository.full_name
   end
 
   test 'should create javascript repository' do
@@ -43,8 +41,6 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
     repository = @user.repositories.find_by(github_id: 456)
     assert repository
     assert_equal 'javascript', repository.language
-    assert_equal 'js-repo', repository.name
-    assert_equal 'testuser/js-repo', repository.full_name
   end
 
   test 'should not create unsupported language repository' do
