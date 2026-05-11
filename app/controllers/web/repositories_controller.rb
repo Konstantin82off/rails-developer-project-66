@@ -50,14 +50,14 @@ class Web::RepositoriesController < Web::ApplicationController
       return
     end
 
+    # Создаём репозиторий только с обязательными полями
     repository = current_user.repositories.create!(
-      name: github_repo.name,
       github_id: github_repo.id,
-      full_name: github_repo.full_name,
-      language: github_repo.language.downcase,
-      clone_url: github_repo.clone_url,
-      ssh_url: github_repo.ssh_url
+      language: github_repo.language.downcase
     )
+
+    # Запускаем фоновую джобу для заполнения остальных полей
+    UpdateRepositoryInfoJob.perform_later(repository.id)
 
     unless Rails.env.test?
       check = repository.checks.create!(commit_id: 'pending', passed: false)
@@ -67,7 +67,7 @@ class Web::RepositoriesController < Web::ApplicationController
       github_service.setup_webhook(repository.full_name, webhook_url)
     end
 
-    redirect_to repositories_path, notice: t('flash.repository_added', name: repository.name)
+    redirect_to repositories_path, notice: t('flash.repository_added', name: repository.github_id)
   end
 
   private

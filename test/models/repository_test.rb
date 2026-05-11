@@ -11,18 +11,13 @@ class RepositoryTest < ActiveSupport::TestCase
     assert @repository.valid?
   end
 
-  test 'should have name' do
-    @repository.name = nil
-    assert_not @repository.valid?
-  end
-
   test 'should have github_id' do
     @repository.github_id = nil
     assert_not @repository.valid?
   end
 
-  test 'should have full_name' do
-    @repository.full_name = nil
+  test 'should have language' do
+    @repository.language = nil
     assert_not @repository.valid?
   end
 end
