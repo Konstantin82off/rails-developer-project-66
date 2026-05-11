@@ -28,16 +28,34 @@
 ## Быстрый старт
 
 ```bash
+make setup
+```
+
+Или вручную:
+
+```bash
 bundle install
 yarn install
 rails db:create db:migrate
 rails server
 ```
 
+## Доступные Make команды
+
+| Команда | Описание |
+|---------|----------|
+| `make setup` | Полная настройка проекта (bin/setup + .env + assets) |
+| `make start` | Запуск Rails сервера на порту 3000 |
+| `make test` | Запуск всех тестов |
+| `make console` | Открыть Rails console |
+| `make db-prepare` | Создать БД, выполнить миграции, загрузить seed |
+| `make prepare-env` | Скопировать `.env.example` в `.env` (если не существует) |
+| `make help` | Показать все доступные команды |
+
 ## Тесты
 
 ```bash
-rails test
+make test
 ```
 
 ## Линтеры
@@ -57,7 +75,7 @@ npx eslint .         # JavaScript
 
 ## Переменные окружения
 
-Создайте файл .env:
+Создайте файл .env на основе .env.example:
 
 ```bash
 GITHUB_CLIENT_ID=your_client_id
@@ -69,6 +87,8 @@ SMTP_USERNAME=your_smtp_username
 SMTP_PASSWORD=your_smtp_password
 ```
 
+Для продакшена на Render добавьте переменную BASE_URL=https://rails-developer-project-66.onrender.com
+
 ## Технологии
 
 - Ruby 4.0.2 / Rails 8.0.5
@@ -76,5 +96,8 @@ SMTP_PASSWORD=your_smtp_password
 - PostgreSQL / SQLite3
 - Rollbar, Octokit, OmniAuth
 - RuboCop, ESLint
-- ActiveJob, AASM
-# Test auto-deploy
+- ActiveJob, AASM, Pundit
+
+## Деплой на Render (бесплатный тариф)
+
+На бесплатном тарифe Render отсутствует возможность запуска фоновых воркеров для ActiveJob. Поэтому в проекте используется синхронный вызов джоб (perform_now). При переходе на платный тариф достаточно заменить perform_now на perform_later для асинхронной обработки.
