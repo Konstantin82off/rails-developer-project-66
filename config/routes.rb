@@ -2,15 +2,15 @@
 
 Rails.application.routes.draw do
   namespace :api do
-    post '/checks', to: 'checks#create'
+    resources :checks, only: [:create]
   end
 
   scope module: :web do
     root 'home#index'
 
-    post '/auth/:provider', to: 'auth#request', as: :auth_request
-    get '/auth/:provider/callback', to: 'auth#callback', as: :callback_auth
-    delete '/logout', to: 'auth#destroy'
+    post 'auth/:provider', to: 'auth#request', as: :auth_request
+    get 'auth/:provider/callback', to: 'auth#callback', as: :callback_auth
+    delete 'logout', to: 'auth#destroy'
 
     resources :repositories, only: %i[index new create show] do
       resources :checks, only: %i[create show], module: :repositories
@@ -21,6 +21,6 @@ Rails.application.routes.draw do
   get 'rollbar/test' => 'rollbar#test' if Rails.env.development?
 
   if Rails.env.test?
-    post '/login_as_user', to: 'web/auth#login_as_user'
+    post 'login_as_user', to: 'web/auth#login_as_user'
   end
 end
