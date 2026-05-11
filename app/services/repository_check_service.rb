@@ -15,10 +15,12 @@ class RepositoryCheckService
   end
 
   def perform
-    update_state(:checking)
+    return unless @check.may_start?
+
+    @check.start!
     clone_repository
     run_linter
-    update_state(:finished)
+    @check.complete!
   rescue StandardError => e
     handle_error(e)
   ensure
@@ -26,23 +28,6 @@ class RepositoryCheckService
   end
 
   private
-
-  def update_state(state)
-    case state
-    when :checking
-      @check.start!
-    when :finished
-      @check.complete!
-    end
-
-    return if @check.save
-
-    error_msg = I18n.t('services.repository_check.failed_to_save',
-                       id: @check.id,
-                       errors: @check.errors.full_messages.join(', '))
-    Rails.logger.error error_msg
-    raise error_msg
-  end
 
   def run_linter
     if Rails.env.test?
