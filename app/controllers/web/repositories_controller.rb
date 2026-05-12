@@ -72,7 +72,7 @@ class Web::RepositoriesController < Web::ApplicationController
 
     UpdateRepositoryInfoJob.perform_later(repository.id)
     check = repository.checks.create!(commit_id: 'pending', passed: false, aasm_state: 'created')
-    RepositoryCheckJob.perform_now(check.id)
+    RepositoryCheckJob.perform_later(check.id)
   end
 
   def github_client

@@ -1,0 +1,32 @@
+development:
+  workers:
+    - queues: "*"
+      threads: 1
+      polling_interval: 0.1
+      mode: async
+  dispatchers:
+    - polling_interval: 1
+      batch_size: 500
+      mode: async
+  scheduler:
+    mode: async
+
+production:
+  workers:
+    - queues: "*"
+      threads: 3
+      polling_interval: 0.1
+      mode: async
+  dispatchers:
+    - polling_interval: 1
+      batch_size: 500
+      mode: async
+  scheduler:
+    mode: async
+
+test:
+  workers:
+    - queues: "*"
+      threads: 1
+      polling_interval: 0
+      mode: inline
