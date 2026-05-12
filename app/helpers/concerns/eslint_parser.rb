@@ -11,7 +11,7 @@ module EslintParser
       next if line.blank?
 
       if line.include?('.js') && line.end_with?(':')
-        current_file = line.chomp(':')
+        current_file = extract_relative_path(line.chomp(':'))
       elsif current_file && (match = line.match(/Line (\d+): (.+?) \(([^)]+)\)$/))
         offenses << {
           file: current_file,
@@ -22,5 +22,15 @@ module EslintParser
       end
     end
     offenses
+  end
+
+  private
+
+  def extract_relative_path(full_path)
+    if full_path =~ %r{tmp/repositories/\d+/\d+/(.*)}
+      Regexp.last_match(1)
+    else
+      File.basename(full_path)
+    end
   end
 end
