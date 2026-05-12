@@ -38,20 +38,12 @@ module RubocopParser
 
   def build_offense_hash(file_path, offense)
     {
-      file: extract_relative_path(file_path),
+      file: file_path,
       line_column: "#{offense['location']['line']}:#{offense['location']['column']}",
       rule: offense['cop_name'],
       message: offense['message'],
       severity: offense['severity']
     }
-  end
-
-  def extract_relative_path(full_path)
-    if full_path =~ %r{tmp/repositories/\d+/\d+/(.*)}
-      Regexp.last_match(1)
-    else
-      full_path
-    end
   end
 
   def parse_rubocop_text_output(output)
@@ -65,7 +57,7 @@ module RubocopParser
       next unless (match = line.match(/^(.+?):(\d+):(\d+): [A-Z]: ([^:]+): (.+)$/))
 
       offenses << {
-        file: extract_relative_path(match[1]),
+        file: match[1],
         line_column: "#{match[2]}:#{match[3]}",
         rule: match[4],
         message: match[5]

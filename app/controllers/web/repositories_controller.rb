@@ -70,9 +70,9 @@ class Web::RepositoriesController < Web::ApplicationController
   def schedule_background_jobs(repository)
     return if Rails.env.test?
 
+    # Обновляем информацию о репозитории (clone_url, name, full_name)
+    # Проверка запустится внутри UpdateRepositoryInfoJob после обновления
     UpdateRepositoryInfoJob.perform_later(repository.id)
-    check = repository.checks.create!(commit_id: 'pending', passed: false, aasm_state: 'created')
-    RepositoryCheckJob.perform_later(check.id)
   end
 
   def github_client
