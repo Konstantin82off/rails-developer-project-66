@@ -74,4 +74,7 @@ Rails.application.configure do
 
   # Allow all hosts for webhook testing (ngrok, localtunnel, etc.)
   config.hosts.clear
+
+  # Use async queue adapter for development (background threads)
+  config.active_job.queue_adapter = :async
 end

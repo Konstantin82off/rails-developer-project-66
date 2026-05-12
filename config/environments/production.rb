@@ -51,8 +51,8 @@ Rails.application.configure do
   # Replace the default in-process memory cache store with a durable alternative.
   config.cache_store = :solid_cache_store
 
-  # Use inline queue adapter on free Render tier (no background worker)
-  config.active_job.queue_adapter = :inline
+  # Use async queue adapter for production (background threads)
+  config.active_job.queue_adapter = :async
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.

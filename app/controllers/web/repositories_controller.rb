@@ -39,7 +39,7 @@ class Web::RepositoriesController < Web::ApplicationController
     repository = create_repository(github_repo)
     schedule_background_jobs(repository)
 
-    redirect_to repositories_path, notice: t('flash.repository_added', name: repository.name)
+    redirect_to repositories_path, notice: t('flash.repository_added', name: repository.github_id)
   end
 
   private
@@ -58,21 +58,16 @@ class Web::RepositoriesController < Web::ApplicationController
 
   def create_repository(github_repo)
     current_user.repositories.create!(
-      name: github_repo.name,
       github_id: github_repo.id,
-      full_name: github_repo.full_name,
-      language: github_repo.language.downcase,
-      clone_url: github_repo.clone_url,
-      ssh_url: github_repo.ssh_url
+      language: github_repo.language.downcase
     )
   end
 
   def schedule_background_jobs(repository)
     return if Rails.env.test?
 
-    # Обновляем информацию о репозитории (clone_url, name, full_name)
-    # Проверка запустится внутри UpdateRepositoryInfoJob после обновления
-    UpdateRepositoryInfoJob.perform_later(repository.id)
+    check = repository.checks.create!(commit_id: 'pending', passed: false, aasm_state: 'created')
+    RepositoryCheckJob.perform_later(check.id)
   end
 
   def github_client
