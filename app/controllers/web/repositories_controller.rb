@@ -16,7 +16,7 @@ class Web::RepositoriesController < Web::ApplicationController
   end
 
   def new
-    @github_repos = github_service.fetch_user_repositories(exclude_ids: current_user.repositories.pluck(:github_id))
+    @github_repos = fetch_cached_user_repositories
     @repositories = current_user.repositories
     render :new
   end
@@ -75,6 +75,18 @@ class Web::RepositoriesController < Web::ApplicationController
 
     check = repository.checks.create!(commit_id: 'pending', passed: false, aasm_state: 'created')
     RepositoryCheckJob.perform_later(check.id)
+  end
+
+  def fetch_cached_user_repositories
+    return [] unless current_user
+
+    cache_key = "user_repositories_#{current_user.id}"
+    Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+      github_service.fetch_user_repositories(exclude_ids: current_user.repositories.pluck(:github_id))
+    end
+  rescue StandardError => e
+    Rails.logger.error "Failed to fetch repositories: #{e.message}"
+    []
   end
 
   def github_client
