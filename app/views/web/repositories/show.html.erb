@@ -18,7 +18,7 @@
             <p><strong><%= t(".updated_at") %>:</strong> <%= @repository.updated_at.strftime("%d %B %Y, %H:%M") if @repository.updated_at %></p>
           </div>
 
-          <% if @repository.checks.any? %>
+          <% if @checks.any? %>
             <table class="table table-striped">
               <thead>
                 <tr>
@@ -30,29 +30,30 @@
                 </tr>
               </thead>
               <tbody>
-                <% @repository.checks.order(created_at: :desc).each do |check| %>
+                <% @checks.each do |check| %>
                   <tr>
                     <td><%= link_to check.id, repository_check_path(@repository, check) %></td>
                     <td>
                       <span class="badge bg-<%= check_state_badge(check.aasm_state) %>">
                         <%= t("aasm.repository_check.state.#{check.aasm_state}", default: check.aasm_state) %>
                       </span>
-                    </td>
+                    </dd>
                     <td>
                       <% if check.commit_id && check.commit_id != "pending" %>
                         <%= link_to check.commit_id.first(8), "https://github.com/#{@repository.full_name}/commit/#{check.commit_id}", target: "_blank" %>
                       <% else %>
                         <%= check.commit_id&.first(8) %>...
                       <% end %>
-                    </td>
+                    </dd>
                     <td>
                       <%= check.passed.nil? ? t(".pending") : (check.passed ? t(".true") : t(".false")) %>
-                    </td>
-                    <td><%= check.created_at.strftime("%d %b, %H:%M") %> </td>
+                    </dd>
+                    <td><%= check.created_at.strftime("%d %b, %H:%M") %> </dd>
                   </tr>
                 <% end %>
               </tbody>
             </table>
+            <%= paginate @checks %>
           <% else %>
             <p class="text-center"><%= t(".no_checks") %> <%= button_to t(".run_first_check"), repository_checks_path(@repository), method: :post, data: { turbo: false } %></p>
           <% end %>

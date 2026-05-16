@@ -4,14 +4,14 @@ class Web::RepositoriesController < Web::ApplicationController
   before_action :authenticate_user!
 
   def index
-    @repositories = policy_scope(Repository)
+    @repositories = policy_scope(Repository).page(params[:page])
     render :index
   end
 
   def show
     @repository = Repository.find(params[:id])
     authorize @repository
-    @checks = @repository.checks.order(created_at: :desc)
+    @checks = @repository.checks.order(created_at: :desc).page(params[:page])
     render :show
   end
 
