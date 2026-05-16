@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Web::AuthController < Web::ApplicationController
-  skip_before_action :authenticate_user!, only: %i[callback login_as_user]
-
   def callback
     auth_hash = request.env['omniauth.auth']
 
