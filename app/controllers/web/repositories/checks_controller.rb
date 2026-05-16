@@ -12,7 +12,7 @@ class Web::Repositories::ChecksController < Web::ApplicationController
 
   def create
     @check = @repository.checks.create!(commit_id: 'pending', passed: false)
-    RepositoryCheckJob.perform_now(@check.id)
+    RepositoryCheckJob.perform_later(@check.id)
     redirect_to repository_check_path(@repository, @check), notice: t('flash.check_created')
   end
 
