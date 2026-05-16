@@ -28,6 +28,7 @@ module RailsDeveloperProject66
 
     # Add services to autoload paths
     config.autoload_paths << Rails.root.join('app/services')
+    config.autoload_paths << Rails.root.join('app/lib')
 
     # Set default locale to Russian
     config.i18n.default_locale = :ru

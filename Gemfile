@@ -62,6 +62,9 @@ gem 'dry-container'
 # State machine
 gem 'aasm'
 
+# Pagination
+gem 'kaminari'
+
 # RuboCop for all environments (including production on Render)
 gem 'rubocop-rails-omakase', require: false
 

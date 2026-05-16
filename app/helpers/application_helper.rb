@@ -4,13 +4,9 @@ module ApplicationHelper
   include RubocopParser
   include EslintParser
 
-  def current_user
-    @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
-  end
-
   def check_state_badge(state)
     case state
-    when 'created', 'cloning', 'checking'
+    when 'created', 'checking'
       'warning'
     when 'finished'
       'success'

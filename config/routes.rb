@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
   get 'rollbar/test' => 'rollbar#test' if Rails.env.development?
 
+  # Только для тестов - быстрый вход
   if Rails.env.test?
     post 'login_as_user', to: 'web/auth#login_as_user'
   end

@@ -2,76 +2,49 @@
 
 class Web::RepositoriesController < Web::ApplicationController
   def index
-    @repositories = policy_scope(Repository)
+    @repositories = policy_scope(Repository).page(params[:page])
     render :index
   end
 
   def show
     @repository = Repository.find(params[:id])
     authorize @repository
+    @checks = @repository.checks.order(created_at: :desc).page(params[:page])
     render :show
   end
 
   def new
-    @github_repos = github_service.fetch_user_repositories(exclude_ids: current_user.repositories.pluck(:github_id))
-    @repositories = current_user.repositories
+    @github_repos = fetch_cached_user_repositories
     render :new
   end
 
   def create
-    github_id = params[:repository][:github_id]
+    @repository = current_user.repositories.new(repository_params)
 
-    if github_id.blank?
-      redirect_to_new_repository_path(t('.github_cannot_be_blank'))
-      return
+    if @repository.save
+      UpdateRepositoryInfoJob.perform_later(@repository.id)
+      redirect_to repositories_path, notice: t('flash.repository_added', name: @repository.github_id)
+    else
+      redirect_to new_repository_path, alert: @repository.errors.full_messages.join(', ')
     end
-
-    github_repo = github_service.fetch_repository_by_id(github_id)
-
-    if github_repo.nil?
-      redirect_to_new_repository_path(t('flash.repository_not_found'))
-      return
-    end
-
-    return redirect_to_new_repository_path(t('flash.repository_not_supported')) unless supported_language?(github_repo)
-    return redirect_to_new_repository_path(t('flash.repository_already_added')) if repository_exists?(github_repo.id)
-
-    repository = create_repository(github_repo)
-    schedule_background_jobs(repository)
-
-    redirect_to repositories_path, notice: t('flash.repository_added', name: repository.name)
   end
 
   private
 
-  def redirect_to_new_repository_path(alert_message)
-    redirect_to new_repository_path, alert: alert_message
+  def repository_params
+    params.expect(repository: [:github_id])
   end
 
-  def supported_language?(github_repo)
-    %w[ruby javascript].include?(github_repo.language&.downcase)
-  end
+  def fetch_cached_user_repositories
+    return [] unless current_user
 
-  def repository_exists?(github_id)
-    current_user.repositories.exists?(github_id: github_id)
-  end
-
-  def create_repository(github_repo)
-    current_user.repositories.create!(
-      name: github_repo.name,
-      github_id: github_repo.id,
-      full_name: github_repo.full_name,
-      language: github_repo.language.downcase,
-      clone_url: github_repo.clone_url,
-      ssh_url: github_repo.ssh_url
-    )
-  end
-
-  def schedule_background_jobs(repository)
-    return if Rails.env.test?
-
-    check = repository.checks.create!(commit_id: 'pending', passed: false, aasm_state: 'created')
-    RepositoryCheckJob.perform_later(check.id)
+    cache_key = "user_repositories_#{current_user.id}"
+    Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+      github_service.fetch_user_repositories(exclude_ids: current_user.repositories.pluck(:github_id))
+    end
+  rescue StandardError => e
+    Rails.logger.error "Failed to fetch repositories: #{e.message}"
+    []
   end
 
   def github_client

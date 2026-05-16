@@ -7,6 +7,8 @@ class RepositoryCheckJob < ApplicationJob
   def perform(check_id)
     check = Repository::Check.find(check_id)
     repository = check.repository
+    git = ApplicationContainer[:git]
+    bash_runner = ApplicationContainer[:bash_runner]
 
     # Если данные репозитория ещё не загружены, получаем из GitHub
     if repository.clone_url.nil?
@@ -22,8 +24,20 @@ class RepositoryCheckJob < ApplicationJob
       )
     end
 
+    repo_path = Rails.root.join("tmp/repositories/#{repository.id}")
+    git.clone(repository.clone_url, repo_path.to_s)
+
+    commit_id_command = "cd #{repo_path} && git rev-parse --short HEAD"
+    commit_id_output, exit_status = bash_runner.execute(commit_id_command)
+
+    if exit_status.zero?
+      check.update!(commit_id: commit_id_output.strip)
+    end
+
     service = RepositoryCheckService.new(check_id)
     service.perform
+
+    FileUtils.rm_rf(repo_path)
   end
 
   private

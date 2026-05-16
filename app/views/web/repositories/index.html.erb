@@ -21,7 +21,9 @@
               <tbody>
                 <% @repositories.each do |repo| %>
                   <tr>
-                    <td><%= link_to repo.name, repository_path(repo) %></dd>
+                    <td>
+                      <%= link_to (repo.name.presence || repo.github_id), repository_path(repo) %>
+                    </td>
                     <td><%= repo.language %></dd>
                     <td>
                       <% if repo.checks.any? %>

@@ -25,21 +25,7 @@ end
 
 class ActionDispatch::IntegrationTest
   def sign_in(user, _options = {})
-    auth_hash = {
-      provider: 'github',
-      uid: user.uid,
-      credentials: {
-        token: user.token
-      },
-      info: {
-        email: user.email,
-        nickname: user.nickname
-      }
-    }
-
-    OmniAuth.config.mock_auth[:github] = OmniAuth::AuthHash::InfoHash.new(auth_hash)
-
-    get callback_auth_url('github')
+    post login_as_user_path(user_id: user.id)
   end
 
   def signed_in?
