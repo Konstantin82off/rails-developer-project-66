@@ -5,9 +5,6 @@ require 'test_helper'
 class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
-
-    @user.repositories.destroy_all
-
     sign_in(@user)
   end
 
@@ -22,12 +19,12 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should create ruby repository' do
-    post repositories_path, params: { repository: { github_id: '123' } }
+    post repositories_path, params: { repository: { github_id: '111' } }
 
     assert_response :redirect
     assert_redirected_to repositories_path
 
-    repository = @user.repositories.find_by(github_id: 123)
+    repository = @user.repositories.find_by(github_id: 111)
     assert repository
     assert_equal 'ruby', repository.language
   end
