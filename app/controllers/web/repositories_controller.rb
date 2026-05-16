@@ -11,6 +11,7 @@ class Web::RepositoriesController < Web::ApplicationController
   def show
     @repository = Repository.find(params[:id])
     authorize @repository
+    @checks = @repository.checks.order(created_at: :desc)
     render :show
   end
 
