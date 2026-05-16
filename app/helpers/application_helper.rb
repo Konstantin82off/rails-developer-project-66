@@ -10,7 +10,7 @@ module ApplicationHelper
 
   def check_state_badge(state)
     case state
-    when 'created', 'cloning', 'checking'
+    when 'created', 'checking'
       'warning'
     when 'finished'
       'success'
