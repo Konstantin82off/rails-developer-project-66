@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-class Api::ChecksController < ApplicationController
-  skip_before_action :verify_authenticity_token
-
+class Api::ChecksController < Api::ApplicationController
   def create
-    payload = JSON.parse(request.body.read)
+    full_name = params['repository']['full_name']
 
-    repository = Repository.find_by(full_name: payload['repository']['full_name'])
+    repository = Repository.find_by(full_name: full_name)
 
     if repository
-      commit_id = payload['after'].presence || 'unknown'
+      commit_id = params['after'].presence || 'pending'
       check = repository.checks.create!(commit_id: commit_id, passed: false)
       RepositoryCheckJob.perform_later(check.id)
 
@@ -17,9 +15,6 @@ class Api::ChecksController < ApplicationController
     else
       head :not_found
     end
-  rescue JSON::ParserError => e
-    Rails.logger.error "JSON parsing error: #{e.message}"
-    head :unprocessable_content
   rescue StandardError => e
     Rails.logger.error "Webhook error: #{e.message}"
     head :unprocessable_content
