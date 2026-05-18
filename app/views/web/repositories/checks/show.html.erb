@@ -1,6 +1,6 @@
 <% content_for :title, t(".title", id: @check.id) %>
 
-<% if @check.aasm_state == "cloning" || @check.aasm_state == "checking" %>
+<% if @check.aasm_state == "created" || @check.aasm_state == "checking" %>
   <meta http-equiv="refresh" content="3">
 <% end %>
 
@@ -20,7 +20,7 @@
               <tbody>
                 <tr>
                   <th style="font-weight: normal;"><%= t(".created_at") %></th>
-                  <td><%= localize_date(@check.created_at, :long) %></td>
+                  <td><%= localize_date(@check.created_at, :long) %> </dd>
                 </tr>
                 <tr>
                   <th style="font-weight: normal;"><%= t(".status") %></th>
@@ -28,17 +28,17 @@
                     <span class="badge bg-<%= check_state_badge(@check.aasm_state) %>">
                       <%= t("aasm.repository_check.state.#{@check.aasm_state}", default: @check.aasm_state) %>
                     </span>
-                  </td>
+                   </dd>
                 </tr>
                 <tr>
                   <th style="font-weight: normal;"><%= t(".passed") %></th>
                   <td>
                     <%= @check.passed.nil? ? t(".pending") : (@check.passed ? t(".true") : t(".false")) %>
-                  </td>
+                   </dd>
                 </tr>
                 <tr>
                   <th style="font-weight: normal;"><%= t(".offenses_count") %></th>
-                  <td><%= @check.offenses_count || 0 %></td>
+                  <td><%= @check.offenses_count || 0 %> </dd>
                 </tr>
                 <tr>
                   <th style="font-weight: normal;"><%= t(".commit_id") %></th>
@@ -48,10 +48,10 @@
                     <% else %>
                       <%= @check.commit_id %>
                     <% end %>
-                   </td>
+                    </dd>
                 </tr>
               </tbody>
-            </table>
+             </table>
           </div>
 
           <% if @check.output.present? %>
@@ -61,7 +61,7 @@
                   <th><%= t(".message") %></th>
                   <th><%= t(".rule") %></th>
                   <th><%= t(".line_column") %></th>
-                </tr>
+                 </tr>
               </thead>
               <tbody>
                 <% parse_linter_output(@check, @check.output).each do |offense| %>
@@ -72,7 +72,7 @@
                     </td>
                     <td style="white-space: normal;"><%= offense[:rule] %></td>
                     <td style="white-space: normal;"><%= offense[:line_column] %></td>
-                  </tr>
+                   </tr>
                 <% end %>
               </tbody>
             </table>
