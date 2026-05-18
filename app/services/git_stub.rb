@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+# rubocop:disable Naming/PredicateMethod
 class GitStub
-  class << self
-    def clone_repository?(_clone_url, _path_to_clone)
-      true
-    end
+  def self.clone_repository(_url, _path)
+    true
   end
 end
+# rubocop:enable Naming/PredicateMethod
