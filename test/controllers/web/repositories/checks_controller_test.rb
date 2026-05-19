@@ -17,13 +17,16 @@ module Web
         assert_response :redirect
         assert_redirected_to repository_check_path(@repository, Repository::Check.last)
 
-        check = Repository::Check.find_by(repository_id: @repository.id, commit_id: 'pending')
-        assert check
-        assert_includes %w[created checking finished failed], check.aasm_state
+        perform_enqueued_jobs
+
+        check = Repository::Check.last
+        assert_equal @repository.id, check.repository_id
+        assert_includes %w[finished failed], check.aasm_state
+        assert_equal 'abc1234', check.commit_id
       end
 
       test 'should show check' do
-        check = @repository.checks.create!(commit_id: 'pending')
+        check = @repository.checks.create!
         get repository_check_path(@repository, check)
 
         assert_response :success

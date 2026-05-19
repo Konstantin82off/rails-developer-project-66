@@ -22,8 +22,10 @@ class Api::ChecksControllerTest < ActionDispatch::IntegrationTest
 
     perform_enqueued_jobs
 
-    check = @repository.checks.find_by(commit_id: 'abc123')
+    check = @repository.checks.last
     assert check
+    assert_includes %w[finished failed], check.aasm_state
+    assert_equal 'abc1234', check.commit_id
   end
 
   test 'POST /api/checks should return not_found for unknown repository' do

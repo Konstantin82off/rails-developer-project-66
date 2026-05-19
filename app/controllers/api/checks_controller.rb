@@ -7,8 +7,7 @@ class Api::ChecksController < Api::ApplicationController
     repository = Repository.find_by(full_name: full_name)
 
     if repository
-      commit_id = params['after'].presence || 'pending'
-      check = repository.checks.create!(commit_id: commit_id, passed: false)
+      check = repository.checks.create!
       RepositoryCheckJob.perform_later(check.id)
 
       head :ok

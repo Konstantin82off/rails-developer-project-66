@@ -13,7 +13,7 @@ class Web::Repositories::ChecksController < Web::ApplicationController
     authenticate_user!
     @repository = Repository.find(params[:repository_id])
     authorize @repository
-    @check = @repository.checks.create!(commit_id: 'pending', passed: false)
+    @check = @repository.checks.create!
     RepositoryCheckJob.perform_later(@check.id)
     redirect_to repository_check_path(@repository, @check), notice: t('flash.check_created')
   end
