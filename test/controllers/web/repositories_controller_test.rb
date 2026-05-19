@@ -24,6 +24,8 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
     assert_redirected_to repositories_path
 
+    perform_enqueued_jobs
+
     repository = @user.repositories.find_by(github_id: 111)
     assert repository
     assert_equal 'ruby', repository.language
@@ -35,6 +37,8 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
     assert_redirected_to repositories_path
 
+    perform_enqueued_jobs
+
     repository = @user.repositories.find_by(github_id: 456)
     assert repository
     assert_equal 'javascript', repository.language
@@ -44,7 +48,9 @@ class Web::RepositoriesControllerTest < ActionDispatch::IntegrationTest
     post repositories_path, params: { repository: { github_id: '789' } }
 
     assert_response :redirect
-    assert_redirected_to new_repository_path
+    assert_redirected_to repositories_path
+
+    perform_enqueued_jobs
 
     repository = @user.repositories.find_by(github_id: 789)
     assert_nil repository
