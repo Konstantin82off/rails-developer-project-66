@@ -90,6 +90,14 @@ en:
     repository_not_found: "Repository not found"
     repository_already_added: "Repository already added"
   
+  views:
+    pagination:
+      first: "« First"
+      last: "Last »"
+      previous: "‹ Prev"
+      next: "Next ›"
+      truncate: "..."
+  
   date:
     abbr_day_names:
     - Sun
@@ -159,7 +167,6 @@ en:
     repository_check:
       state:
         created: "Created"
-        cloning: "Cloning"
         checking: "Checking"
         finished: "Finished"
         failed: "Failed"
