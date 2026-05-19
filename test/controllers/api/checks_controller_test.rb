@@ -8,7 +8,7 @@ class Api::ChecksControllerTest < ActionDispatch::IntegrationTest
     @repository = repositories(:without_checks)
   end
 
-  test 'POST /api/checks should create check and return repository info' do
+  test 'POST /api/checks should create check' do
     payload = {
       repository: {
         full_name: @repository.full_name
@@ -19,9 +19,8 @@ class Api::ChecksControllerTest < ActionDispatch::IntegrationTest
     post api_checks_path, params: payload, headers: { 'Content-Type' => 'application/json' }
 
     assert_response :success
-    json_response = response.parsed_body
-    assert_equal @repository.id, json_response['id']
-    assert_equal @repository.full_name, json_response['full_name']
+
+    perform_enqueued_jobs
 
     check = @repository.checks.find_by(commit_id: 'abc123')
     assert check
